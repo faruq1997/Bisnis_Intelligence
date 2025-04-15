@@ -1,0 +1,30 @@
+Analisis Penjualan Bundling vs Non-Bundling
+
+🎓 Tujuan Pembelajaran:
+1. Mengasah kemampuan identifikasi pola penjualan.
+2. Memahami kontribusi produk bundling terhadap total pendapatan.
+3. Melatih dasar literasi data + komunikasi insight ke manajemen.
+
+📦 Dataset yang Dipakai:
+Gunakan file fruit_glow_sales2024.xlsx
+➡️ Sheet: "Penjualan"
+➡️ Sheet: "Detail_Bundling"
+
+📝 Tugas:
+1. Hitung:
+a. Total pendapatan dari produk bundling vs non-bundling
+b. Jumlah transaksi bundling vs non-bundling
+c. Rata-rata quantity per transaksi bundling vs non-bundling
+
+2. Visualisasikan pakai Excel:
+boleh menggunakan grafik jenis apapun asal relevan
+
+3. Analisis Insight:
+Jawab pertanyaan berikut:
+a. Apakah produk bundling efektif meningkatkan penjualan?
+b. Di bulan apa bundling paling sukses?
+c. Apakah bundling lebih sering dibeli lewat platform tertentu?
+
+4. Rekomendasikan Kebijakan Bisnis:
+a. Apakah promosi bundling perlu ditingkatkan?
+b. Di channel mana bundling sebaiknya difokuskan?
