@@ -55,7 +55,7 @@ Repositori ini berisi kumpulan materi, studi kasus, dan latihan praktis untuk me
 1. Clone repositori ini:
    ```
    gh repo clone faruq1997/Bisnis_Intelligence
-   ```
+   
 2. Buka file .ipynb secara lokal via Jupyter Notebook / Google Colab.
 3. Pelajari dan eksplorasi dataset yang tersedia.
 4. Lanjutkan dengan mini challenge dan tambahkan insight sendiri.
