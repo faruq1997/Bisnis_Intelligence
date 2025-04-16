@@ -1,83 +1,58 @@
-import { questions } from './quiz.js';
+let currentAnswers = [];
 
-let shuffledQuestions = [];
-let userAnswers = [];
-
-window.onload = () => {
-  shuffledQuestions = [...questions];
-  shuffleQuestions(shuffledQuestions);
-  renderQuestions();
-};
-
-function shuffleQuestions(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
-function renderQuestions() {
+function loadQuiz() {
   const container = document.getElementById("quiz-container");
-  container.innerHTML = "";
-  shuffledQuestions.forEach((q, idx) => {
-    const qCard = document.createElement("div");
-    qCard.className = "mb-4";
-    qCard.innerHTML = `
-      <h5>${idx + 1}. ${q.question}</h5>
-      <div id="options-${idx}" class="btn-group-vertical w-100" role="group"></div>
+  const shuffled = [...questions].sort(() => 0.5 - Math.random());
+  shuffled.forEach((q, i) => {
+    const qDiv = document.createElement("div");
+    qDiv.className = "question-card mb-4";
+    qDiv.innerHTML = `
+      <p><strong>Soal ${i + 1}:</strong> ${q.question}</p>
+      <div class="btn-group-vertical w-100" id="q${i}">
+        ${q.choices.map((c, j) => `
+          <button type="button" class="btn btn-outline-secondary" onclick="selectAnswer(${i}, ${j}, this)">${c}</button>
+        `).join("")}
+      </div>
     `;
-    container.appendChild(qCard);
-
-    const optGroup = document.getElementById(`options-${idx}`);
-    q.options.forEach((opt, oidx) => {
-      const btn = document.createElement("button");
-      btn.className = "btn btn-outline-secondary mb-1";
-      btn.innerText = opt;
-      btn.onclick = () => selectAnswer(idx, oidx, btn);
-      optGroup.appendChild(btn);
-    });
+    container.appendChild(qDiv);
   });
+  currentAnswers = Array(shuffled.length).fill(null);
+  window.shuffledQuestions = shuffled;
 }
 
-function selectAnswer(qIdx, optIdx, btn) {
-  userAnswers[qIdx] = optIdx;
-  const btnGroup = document.getElementById(`options-${qIdx}`);
-  [...btnGroup.children].forEach(b => b.classList.remove("btn-primary"));
+function selectAnswer(qIndex, choiceIndex, btn) {
+  const group = document.getElementById(`q${qIndex}`).children;
+  for (let b of group) b.classList.remove("btn-primary");
   btn.classList.add("btn-primary");
+  currentAnswers[qIndex] = choiceIndex;
 }
 
 function submitQuiz() {
-  showReview();
-}
-
-function showReview() {
-  let html = '';
-  shuffledQuestions.forEach((q, i) => {
-    const correct = q.correct;
-    const selected = userAnswers[i];
-    html += `<h6>${i + 1}. ${q.question}</h6>`;
-    q.options.forEach((opt, j) => {
-      let classes = "mb-1";
-      if (j === correct) classes += " text-success fw-bold";
-      if (j === selected && j !== correct) classes += " text-danger";
-      if (j === selected && j === correct) classes += " bg-success text-white";
-      html += `<div class="${classes}">- ${opt}</div>`;
-    });
-    html += "<hr>";
+  const review = document.getElementById("review-container");
+  review.innerHTML = "";
+  window.shuffledQuestions.forEach((q, i) => {
+    const userAnswer = currentAnswers[i];
+    const correct = q.answer === userAnswer;
+    review.innerHTML += `
+      <div class="mb-3">
+        <strong>Soal ${i + 1}:</strong> ${q.question}<br/>
+        <span class="${correct ? 'text-success' : 'text-danger'}">
+          Jawaban Anda: ${q.choices[userAnswer] || "Belum dijawab"}
+        </span><br/>
+        <span class="text-primary">Jawaban Benar: ${q.choices[q.answer]}</span>
+      </div>
+    `;
   });
-
-  document.getElementById("review-container").innerHTML = html;
   document.getElementById("pdf-button").classList.remove("d-none");
 }
 
 function printPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.html(document.getElementById("review-container"), {
-    callback: function (doc) {
-      doc.save("review-kuis-BI.pdf");
-    },
-    x: 10,
-    y: 10
-  });
+  const review = document.getElementById("review-container").innerText;
+  const lines = doc.splitTextToSize(review, 180);
+  doc.text(lines, 10, 10);
+  doc.save("review_kuis_BI.pdf");
 }
+
+window.onload = loadQuiz;
