@@ -10,3 +10,8 @@
 * `'Data Nasabah'!$A$2:$G$61`: Tabel sumber data, mulai dari kolom A hingga G dan baris 2 sampai 61 di sheet bernama **Data Nasabah**.
 * `{2,3,4,5,6,7}`: Ini **tidak valid** dalam fungsi `VLOOKUP` biasa. Fungsi `VLOOKUP` hanya menerima satu indeks kolom (misalnya `2` untuk kolom B). Daftar array `{2,3,4,...}` hanya dapat dipakai dalam **array formula** atau versi Excel yang mendukung **dynamic array** (seperti Excel 365 atau Excel 2019 ke atas).
 * `FALSE`: Menandakan bahwa pencarian harus **tepat sama** (exact match), bukan pendekatan (approximate match).
+
+## Data Cleansing
+Cari nilai yang kosong, bisa lakukan scanning perbaris ataupun dilakukan filtering dahulu, lalu cek nilai tiap kolom/fitur.
+- Jika ada data yang tidak sesuai/seragam bisa disepakati untuk diseragamkan dahulu.
+- Jika ada data yang kosong bisa diisi dengan rata-rata atau dengan nilai yang relevan/sesuai dengan isian data
