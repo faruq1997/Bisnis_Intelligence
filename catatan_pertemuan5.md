@@ -15,3 +15,7 @@
 Cari nilai yang kosong, bisa lakukan scanning perbaris ataupun dilakukan filtering dahulu, lalu cek nilai tiap kolom/fitur.
 - Jika ada data yang tidak sesuai/seragam bisa disepakati untuk diseragamkan dahulu.
 - Jika ada data yang kosong bisa diisi dengan rata-rata atau dengan nilai yang relevan/sesuai dengan isian data
+
+## Data selection
+- Analisis kolom/fitur mana saja yang akan digunakan, semisal jika kolom/fitur tersebut tidak berkorelasi, maka tidak usah digunakan. Biasanya untuk tahu bisa pakai Correlation Matrix. Kita akan pelajari itu nanti
+- Untuk sekarang silahkan hapus saja kolom Id, No HP, Email, Alamat karena tidak kita butuhkan
