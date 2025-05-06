@@ -67,6 +67,8 @@ Repositori ini berisi kumpulan materi, studi kasus, dan latihan praktis untuk me
 
 > 📁 `latihan1_studikasus_fruitglowsales2024.txt`  
 Berisi skenario analisis penjualan produk `Fruit Glow` lengkap dengan pertanyaan-pertanyaan eksploratif dan kebijakan strategis. Cocok digunakan sebagai latihan BI Analyst.
+> 📁 `latihan5_studikasus_datapeminjaman.txt`  
+EDA dan Integrasi Model Decision Tree
 
 ---
 
