@@ -16,6 +16,15 @@ Cari nilai yang kosong, bisa lakukan scanning perbaris ataupun dilakukan filteri
 - Jika ada data yang tidak sesuai/seragam bisa disepakati untuk diseragamkan dahulu.
 - Jika ada data yang kosong bisa diisi dengan rata-rata atau dengan nilai yang relevan/sesuai dengan isian data
 
-## Data selection
+## Data Selection
 - Analisis kolom/fitur mana saja yang akan digunakan, semisal jika kolom/fitur tersebut tidak berkorelasi, maka tidak usah digunakan. Biasanya untuk tahu bisa pakai Correlation Matrix. Kita akan pelajari itu nanti
 - Untuk sekarang silahkan hapus saja kolom Id, No HP, Email, Alamat karena tidak kita butuhkan
+
+## Data Transformation
+untuk transformasi data, pada intinya adalah ubah data misal yang tadinya:
+- 1.000.000 => 1000
+- Laki-laki; Perempuan; => 1;0;
+- SMA; S1; S2; => 0; 1; 2;
+- Layak/Tidak Layak => 0/1
+- dan seterusnya
+sifatnya pregoratif dan tergantung kebutuhan.
