@@ -21,11 +21,11 @@ Repositori ini berisi kumpulan materi, studi kasus, dan latihan praktis untuk me
 | `Business_Intelligence_1.ipynb` | Fundamental Business Intelligence (BI) |
 | `Business_Intelligence_2.ipynb` | Analisis dan visualisasi data (Studi kasus: Fruit Glow) |
 | `Business_Intelligence_3.ipynb` | Data Warehouse |
-| `Business_Intelligence_4.ipynb` | PProfesi Business Intelligence Analyst |
+| `Business_Intelligence_4.ipynb` | Profesi Business Intelligence Analyst |
 | `fruit_glow_sales2024.xlsx` | Dataset utama penjualan skincare `Fruit Glow` tahun 2024 |
 | `latihan1_studikasus_fruitglowsales2024.txt` | Mini challenge #1: Studi kasus analisis penjualan dan strategi distribusi |
 | `Data_PMB_UPG_2020_2024_Final.xlsx` | Dataset tambahan untuk studi kasus dunia pendidikan (PMB) |
-
+| `Business_Intelligence_5.ipynb` | Data Mining |
 ---
 
 ## 📌 Topik yang Dipelajari
