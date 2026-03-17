@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Business Intelligence - Kedai Kopi</title>
+    
+    <!-- Tailwind CSS untuk Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js untuk Simulasi 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Chart.js untuk Dashboard BI -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- FontAwesome untuk Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #game-container { position: relative; width: 100vw; height: 100vh; }
+        
+        /* Layar UI */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .screen.active { display: flex; }
+        
+        /* 3D Canvas Overlay */
+        #simulation-ui {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            pointer-events: none;
+        }
+        
+        /* Scrollbar styling untuk dashboard */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+
+    <!-- LAYAR 1: MENU UTAMA -->
+    <div id="screen-menu" class="screen active bg-slate-900 text-white items-center justify-center">
+        <div class="text-center max-w-lg p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
+            <i class="fa-solid fa-mug-hot text-6xl text-amber-500 mb-6"></i>
+            <h1 class="text-4xl font-bold mb-4">Simulasi BI Kedai Kopi</h1>
+            <p class="text-slate-300 mb-8">Pelajari Business Intelligence dengan mengelola data operasional kedai kopi Anda. Analisis tren, baca cuaca, optimalkan harga, dan maksimalkan profit!</p>
+            <button onclick="startGame()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-8 rounded-full transition transform hover:scale-105 shadow-lg">
+                Mulai Simulasi Baru
+            </button>
+        </div>
+    </div>
+
+    <!-- LAYAR 2: DASHBOARD BI (STRATEGI) -->
+    <div id="screen-dashboard" class="screen bg-slate-100 p-4 md:p-8">
+        <div class="max-w-6xl mx-auto w-full">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800"><i class="fa-solid fa-chart-pie text-amber-600 mr-2"></i> BI Dashboard</h2>
+                    <p class="text-slate-500" id="dash-day-indicator">Analisis Kinerja - Menjelang Hari Ke-1</p>
+                    <p class="text-indigo-600 font-semibold mt-1" id="dash-date-indicator"><i class="fa-regular fa-calendar"></i> Sinkronisasi Waktu...</p>
+                </div>
+                
+                <div class="mt-4 md:mt-0 flex flex-wrap items-center gap-4">
+                    <button onclick="showTutorial()" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm flex items-center bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg border border-indigo-200 transition">
+                        <i class="fa-solid fa-circle-question mr-2"></i> Panduan
+                    </button>
+                    <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-200 flex items-center gap-4 overflow-x-auto">
+                        <div class="text-right">
+                            <p class="text-xs text-slate-500 uppercase font-bold">Total Kas</p>
+                            <p class="text-xl font-bold text-green-600" id="dash-money">Rp 1.000.000</p>
+                        </div>
+                        <div class="text-right border-l pl-4">
+                            <p class="text-xs text-slate-500 uppercase font-bold">Stok Kopi</p>
+                            <div class="flex gap-3 mt-1">
+                                <p class="text-sm font-bold text-red-500" title="Kopi Panas"><i class="fa-solid fa-mug-hot"></i> <span id="dash-inv-hot">25</span></p>
+                                <p class="text-sm font-bold text-blue-500" title="Es Kopi"><i class="fa-solid fa-glass-water"></i> <span id="dash-inv-iced">25</span></p>
+                            </div>
+                        </div>
+                        <div class="text-right border-l pl-4 bg-sky-50 px-3 rounded">
+                            <p class="text-xs text-sky-700 uppercase font-bold">Prediksi Cuaca Nanti</p>
+                            <p class="text-xl font-bold" id="dash-weather">☀️ Cerah</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" id="kpi-container">
+                <!-- Diisi oleh JS -->
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-700 mb-2">Tren Keuangan (Rp)</h3>
+                    <div class="relative h-64">
+                        <canvas id="financeChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-700 mb-2">Volume Penjualan & Kepuasan</h3>
+                    <div class="relative h-64">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Business Consultant -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl shadow-sm border border-indigo-200 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                    <h3 class="text-xl font-bold text-indigo-900"><i class="fa-solid fa-robot text-indigo-600 mr-2"></i> ✨ Konsultan BI AI</h3>
+                    <button id="btn-ai-consultant" onclick="getAIConsultantAdvice()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-5 rounded-lg shadow-md transition transform hover:scale-105 text-sm flex items-center gap-2">
+                        ✨ Minta Saran Strategi
+                    </button>
+                </div>
+                <div id="ai-consultant-output" class="bg-white p-4 rounded-lg border border-indigo-100 min-h-[60px] flex items-center shadow-inner">
+                    <span class="text-slate-500 italic">Klik tombol "Minta Saran Strategi" di atas untuk mendapatkan analisis pakar berbasis data dari AI.</span>
+                </div>
+            </div>
+
+            <!-- Input Strategi -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-amber-500">
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Keputusan Strategis Hari Berikutnya</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <label class="block text-sm font-bold text-slate-700 mb-2 border-b pb-1"><i class="fa-solid fa-tag"></i> Harga Jual (Rp)</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between"><span class="text-xs text-red-600 font-semibold"><i class="fa-solid fa-mug-hot"></i> Panas</span> <input type="number" id="input-price-hot" class="w-24 p-1 border rounded text-right text-sm" value="20000"></div>
+                            <div class="flex items-center justify-between"><span class="text-xs text-blue-600 font-semibold"><i class="fa-solid fa-glass-water"></i> Es Kopi</span> <input type="number" id="input-price-iced" class="w-24 p-1 border rounded text-right text-sm" value="25000"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <label class="block text-sm font-bold text-slate-700 mb-2 border-b pb-1"><i class="fa-solid fa-bullhorn"></i> Budget Marketing (Rp)</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between" title="Menarik Anak Muda"><span class="text-xs text-purple-600 font-semibold"><i class="fa-brands fa-instagram"></i> Sosmed</span> <input type="number" id="input-marketing-sosmed" class="w-24 p-1 border rounded text-right text-sm" value="30000"></div>
+                            <div class="flex items-center justify-between" title="Menarik Dewasa/Mobil"><span class="text-xs text-slate-600 font-semibold"><i class="fa-solid fa-newspaper"></i> Brosur</span> <input type="number" id="input-marketing-brosur" class="w-24 p-1 border rounded text-right text-sm" value="20000"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <label class="block text-sm font-bold text-slate-700 mb-2 border-b pb-1"><i class="fa-solid fa-box-open"></i> Beli Stok (Cup)</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between"><span class="text-xs text-red-600">Panas @10rb</span> <input type="number" id="input-buy-hot" class="w-16 p-1 border rounded text-right text-sm" placeholder="0"></div>
+                            <div class="flex items-center justify-between"><span class="text-xs text-blue-600">Es @12rb</span> <input type="number" id="input-buy-iced" class="w-16 p-1 border rounded text-right text-sm" placeholder="0"></div>
+                        </div>
+                        <button onclick="buyStock()" class="w-full mt-2 bg-amber-600 text-white py-1 rounded hover:bg-amber-700 shadow-sm text-xs font-bold transition"><i class="fa-solid fa-cart-shopping"></i> Bayar Stok</button>
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <label class="block text-sm font-bold text-slate-700 mb-2 border-b pb-1"><i class="fa-solid fa-users-gear"></i> Karyawan (Rp 50rb/hr)</label>
+                        <div class="flex items-center gap-3 mt-4">
+                            <span id="txt-employees" class="font-bold text-2xl text-slate-700 w-8 text-center">1</span>
+                            <button onclick="hireEmployee()" class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 text-sm w-full font-semibold">+ Rekrut</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button onclick="startSimulationDay()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> Mulai Hari <span id="btn-next-day">1</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAYAR 3: SIMULASI 3D -->
+    <div id="screen-simulation" class="screen bg-sky-200">
+        <!-- 3D Canvas Container -->
+        <div id="canvas-container" class="absolute top-0 left-0 w-full h-full"></div>
+        
+        <!-- UI Overlay di atas 3D -->
+        <div id="simulation-ui" class="p-4 flex justify-between items-start z-10">
+            <div class="bg-white/90 backdrop-blur p-4 rounded-xl shadow-lg border border-slate-200 pointer-events-auto">
+                <h2 class="text-2xl font-bold text-slate-800 mb-1">Hari <span id="sim-day">1</span> <span id="sim-time" class="text-sm font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded">08:00</span></h2>
+                <p class="text-sm text-indigo-600 font-medium mb-2" id="sim-date-indicator">...</p>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-slate-500">Terjual</p>
+                        <p class="text-xl font-bold text-green-600" id="sim-sold">0 Cup</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-500">Kecewa</p>
+                        <p class="text-xl font-bold text-red-500" id="sim-missed">0 Orang</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="fastForward()" class="bg-white/90 backdrop-blur text-slate-700 p-3 rounded-full shadow-lg border border-slate-200 hover:bg-slate-100 pointer-events-auto transition">
+                <i class="fa-solid fa-forward-fast"></i> Percepat
+            </button>
+        </div>
+        
+        <!-- Notifikasi Mengambang dalam Canvas HTML -->
+        <div id="floating-texts" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-20"></div>
+    </div>
+
+    <!-- MODAL PANDUAN / NARASI BI -->
+    <div id="tutorial-modal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex-col items-center justify-center p-4">
+        <div class="bg-white p-6 md:p-8 rounded-2xl max-w-2xl w-full relative shadow-2xl">
+            <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white p-3 rounded-full border-4 border-white shadow-lg">
+                <i class="fa-solid fa-lightbulb text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mt-4 mb-4 text-center">Selamat Datang di Dunia Business Intelligence!</h2>
+            
+            <div class="text-slate-600 space-y-4 text-sm md:text-base mb-8">
+                <p>Sebagai Manajer Kedai Kopi di era digital, <strong>insting saja tidak cukup</strong>. Anda memerlukan <em>Data-Driven Decision Making</em>.</p>
+                
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-crosshairs text-blue-500 mr-2"></i> Misi Anda:</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Amati grafik <strong>Penjualan & Kepuasan Pelanggan</strong>.</li>
+                        <li><strong>Harga & Demografi:</strong> Sesuaikan harga. Kedai Anda didatangi berbagai kalangan (anak-anak, dewasa, pria, wanita). Anak muda biasanya lebih sensitif harga!</li>
+                        <li><strong>Drive-Thru & Dine-in:</strong> Sebagian datang bawa mobil/motor, sebagian jalan kaki dan asyik nongkrong. Pastikan antrean lancar.</li>
+                        <li><strong>Prakiraan Cuaca:</strong> Cek cuaca hari ini. Jika <strong>Hujan</strong>, orang yang keluar rumah sedikit, tapi mereka *sangat ingin* kopi hangat!</li>
+                    </ul>
+                </div>
+                <p class="italic text-center text-slate-500">Gunakan AI Konsultan BI di dashboard jika Anda ragu saat membaca tren grafik. Mari ciptakan profit maksimal!</p>
+            </div>
+            
+            <button onclick="closeTutorial()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md">
+                Paham, Buka Dashboard Saya!
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL REKAP HARIAN -->
+    <div id="rekap-modal" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex-col items-center justify-center p-4">
+        <div class="bg-white p-6 md:p-8 rounded-2xl max-w-md w-full relative shadow-2xl text-center">
+            <div class="mx-auto bg-green-100 text-green-600 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                <i class="fa-solid fa-flag-checkered text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Hari Selesai!</h2>
+            <p class="text-slate-500 mb-6" id="rekap-tanggal">Tanggal: -</p>
+            
+            <div class="bg-slate-50 p-4 rounded-xl text-left space-y-3 mb-6 border border-slate-200">
+                <div class="flex justify-between border-b border-slate-200 pb-2">
+                    <span class="text-slate-600">Terjual</span>
+                    <span class="font-bold text-slate-800" id="rekap-terjual">0 Cup</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-200 pb-2">
+                    <span class="text-slate-600">Pendapatan</span>
+                    <span class="font-bold text-green-600" id="rekap-pendapatan">Rp 0</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-200 pb-2">
+                    <span class="text-slate-600">Total Biaya (HPP + Karyawan)</span>
+                    <span class="font-bold text-red-500" id="rekap-biaya">Rp 0</span>
+                </div>
+                <div class="flex justify-between text-lg mt-2">
+                    <span class="font-bold text-slate-700">Profit Bersih</span>
+                    <span class="font-bold text-indigo-600" id="rekap-profit">Rp 0</span>
+                </div>
+            </div>
+            
+            <button onclick="closeRekapModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md">
+                Lanjut Analisis Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+</div>
+
+<script>
+    // --- STATE MANAGEMENT ---
+    let gameState = {
+        day: 1,
+        currentDate: new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Jakarta"})),
+        money: 1000000,
+        inventory: { hot: 25, iced: 25 },
+        costPerCup: { hot: 10000, iced: 12000 }, // Modal Es Kopi lebih mahal karena cup plastik & es batu
+        employees: 1,
+        employeeSalary: 50000,
+        history: [],
+        forecastWeather: Math.random() < 0.3 ? 'Hujan' : 'Cerah', 
+        
+        currentPrice: { hot: 20000, iced: 25000 },
+        currentMarketing: { sosmed: 30000, brosur: 20000 },
+        
+        todaySold: { hot: 0, iced: 0 },
+        todayMissed: 0,
+        todayRevenue: 0,
+        todayCustomerSatisfaction: 100,
+        todayAges: [],
+        todayWeather: 'Cerah'
+    };
+
+    let charts = { finance: null, sales: null };
+
+    const formatRp = (angka) => {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+    };
+
+    const formatDate = (dateObj) => {
+        return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(dateObj);
+    };
+
+    // --- NAVIGATION & UI UX ---
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function startGame() {
+        document.getElementById('screen-menu').classList.remove('active');
+        showTutorial();
+    }
+
+    function showTutorial() {
+        document.getElementById('tutorial-modal').classList.remove('hidden');
+        document.getElementById('tutorial-modal').classList.add('flex');
+    }
+
+    function closeTutorial() {
+        document.getElementById('tutorial-modal').classList.add('hidden');
+        document.getElementById('tutorial-modal').classList.remove('flex');
+        
+        if (!document.getElementById('screen-dashboard').classList.contains('active') && 
+            !document.getElementById('screen-simulation').classList.contains('active')) {
+            updateDashboardUI();
+            showScreen('screen-dashboard');
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-green-600' : (type === 'error' ? 'bg-red-500' : 'bg-blue-600');
+        const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-circle-exclamation' : 'fa-info-circle');
+        
+        toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-y-10 opacity-0 pointer-events-auto z-50`;
+        toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+        
+        document.getElementById('toast-container').appendChild(toast);
+        
+        requestAnimationFrame(() => toast.classList.remove('translate-y-10', 'opacity-0'));
+        setTimeout(() => {
+            toast.classList.add('translate-y-10', 'opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    function closeRekapModal() {
+        document.getElementById('rekap-modal').classList.add('hidden');
+        document.getElementById('rekap-modal').classList.remove('flex');
+    }
+
+    // --- LOGIK DASHBOARD BI ---
+    function updateDashboardUI() {
+        document.getElementById('dash-day-indicator').innerText = `Analisis Kinerja - Menjelang Hari Ke-${gameState.day}`;
+        document.getElementById('dash-date-indicator').innerHTML = `<i class="fa-regular fa-calendar"></i> ${formatDate(gameState.currentDate)}`;
+        document.getElementById('dash-money').innerText = formatRp(gameState.money);
+        
+        document.getElementById('dash-inv-hot').innerText = gameState.inventory.hot;
+        document.getElementById('dash-inv-iced').innerText = gameState.inventory.iced;
+        
+        document.getElementById('btn-next-day').innerText = gameState.day;
+        document.getElementById('txt-employees').innerText = gameState.employees;
+
+        const weatherIcon = gameState.forecastWeather === 'Hujan' ? '<i class="fa-solid fa-cloud-rain"></i>' : '<i class="fa-solid fa-sun"></i>';
+        const weatherColor = gameState.forecastWeather === 'Hujan' ? 'text-slate-500' : 'text-amber-500';
+        document.getElementById('dash-weather').innerHTML = `<span class="${weatherColor}">${weatherIcon} ${gameState.forecastWeather}</span>`;
+
+        renderKPICards();
+        renderCharts();
+    }
+
+    function renderKPICards() {
+        const container = document.getElementById('kpi-container');
+        if (gameState.history.length === 0) {
+            container.innerHTML = `<div class="col-span-4 bg-blue-50 text-blue-800 p-4 rounded-lg text-center text-sm border border-blue-200"><i class="fa-solid fa-circle-info mr-2"></i>Belum ada data. Mulai hari ke-1 untuk analitik.</div>`;
+            return;
+        }
+
+        const lastDay = gameState.history[gameState.history.length - 1];
+        let totalCup = lastDay.sold.hot + lastDay.sold.iced;
+        
+        container.innerHTML = `
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-blue-500">
+                <p class="text-xs text-slate-500 uppercase font-bold">Pendapatan Kemarin</p>
+                <p class="text-2xl font-bold text-slate-800">${formatRp(lastDay.revenue)}</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-green-500">
+                <p class="text-xs text-slate-500 uppercase font-bold">Laba Bersih Kemarin</p>
+                <p class="text-2xl font-bold text-slate-800">${formatRp(lastDay.profit)}</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-amber-500">
+                <p class="text-xs text-slate-500 uppercase font-bold">Total Terjual <span class="text-[10px] font-normal">(Rata Usia: ${lastDay.avgAge}th)</span></p>
+                <p class="text-2xl font-bold text-slate-800">${totalCup} <span class="text-sm font-normal text-slate-500">/ ${lastDay.totalCustomers} org</span></p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 border-l-4 ${lastDay.satisfaction > 70 ? 'border-l-green-500' : 'border-l-red-500'}">
+                <p class="text-xs text-slate-500 uppercase font-bold">Kepuasan Pelanggan</p>
+                <p class="text-2xl font-bold text-slate-800">${Math.round(lastDay.satisfaction)}%</p>
+            </div>
+        `;
+    }
+
+    function renderCharts() {
+        if (gameState.history.length === 0) return;
+        const labels = gameState.history.map(h => `H-${h.day}`);
+        const revenueData = gameState.history.map(h => h.revenue);
+        const profitData = gameState.history.map(h => h.profit);
+        
+        const soldHotData = gameState.history.map(h => h.sold.hot);
+        const soldIcedData = gameState.history.map(h => h.sold.iced);
+        const satisfactionData = gameState.history.map(h => h.satisfaction);
+
+        const ctxFinance = document.getElementById('financeChart').getContext('2d');
+        if (charts.finance) charts.finance.destroy();
+        charts.finance = new Chart(ctxFinance, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Pendapatan', data: revenueData, borderColor: '#3b82f6', backgroundColor: '#3b82f620', fill: true, tension: 0.4 },
+                    { label: 'Laba Bersih', data: profitData, borderColor: '#10b981', backgroundColor: '#10b98120', fill: true, tension: 0.4 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        const ctxSales = document.getElementById('salesChart').getContext('2d');
+        if (charts.sales) charts.sales.destroy();
+        charts.sales = new Chart(ctxSales, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Kopi Panas', data: soldHotData, backgroundColor: '#ef4444', stack: 'Stack 0', yAxisID: 'y' },
+                    { label: 'Es Kopi', data: soldIcedData, backgroundColor: '#3b82f6', stack: 'Stack 0', yAxisID: 'y' },
+                    { label: 'Kepuasan (%)', data: satisfactionData, type: 'line', borderColor: '#f59e0b', backgroundColor: '#f59e0b', tension: 0.4, yAxisID: 'y1' }
+                ]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false, 
+                plugins: { legend: { position: 'bottom' } },
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, type: 'linear', display: true, position: 'left', title: {display:true, text:'Cup'} },
+                    y1: { type: 'linear', display: true, position: 'right', min: 0, max: 100, grid: {drawOnChartArea: false}, title: {display:true, text:'%'} }
+                }
+            }
+        });
+    }
+
+    function buyStock() {
+        const inHot = parseInt(document.getElementById('input-buy-hot').value) || 0;
+        const inIced = parseInt(document.getElementById('input-buy-iced').value) || 0;
+        
+        if (inHot === 0 && inIced === 0) {
+            showToast("Masukkan jumlah stok yang valid (minimal 1 cup panas/es).", "error");
+            return;
+        }
+        
+        const costHot = inHot * gameState.costPerCup.hot;
+        const costIced = inIced * gameState.costPerCup.iced;
+        const totalCost = costHot + costIced;
+
+        if (gameState.money >= totalCost) {
+            gameState.money -= totalCost;
+            gameState.inventory.hot += inHot;
+            gameState.inventory.iced += inIced;
+            
+            document.getElementById('input-buy-hot').value = '';
+            document.getElementById('input-buy-iced').value = '';
+            
+            updateDashboardUI();
+            showToast(`Berhasil stok: ${inHot} Panas, ${inIced} Es seharga ${formatRp(totalCost)}`, "success");
+        } else {
+            showToast(`Uang kas tidak cukup! Butuh ${formatRp(totalCost)}`, "error");
+        }
+    }
+
+    function hireEmployee() {
+        const cost = gameState.employeeSalary;
+        if (gameState.money >= cost) {
+            gameState.money -= cost;
+            gameState.employees++;
+            updateDashboardUI();
+            showToast(`Berhasil merekrut karyawan baru! (Total: ${gameState.employees} Orang).`, "success");
+        } else {
+            showToast(`Uang kas tidak cukup untuk membayar gaji awal sebesar ${formatRp(cost)}!`, "error");
+        }
+    }
+
+    // --- LOGIK SIMULASI 3D ---
+    let simEngine = {
+        scene: null, camera: null, renderer: null, dirLight: null,
+        rainParticles: null, 
+        animationId: null, isRunning: false,
+        customers: [], baristas: [], seats: [],
+        simTime: 0, simDuration: 1000, speedMultiplier: 1,
+        expectedCustomers: 0, spawnRate: 0, framesSinceLastSpawn: 0, spawnedCount: 0,
+        marketingRatio: {sosmed: 0, brosur: 0}
+    };
+
+    function startSimulationDay() {
+        // Ambil data form Product Mix
+        gameState.currentPrice.hot = parseInt(document.getElementById('input-price-hot').value) || 20000;
+        gameState.currentPrice.iced = parseInt(document.getElementById('input-price-iced').value) || 25000;
+        
+        // Ambil data form Marketing Mix
+        gameState.currentMarketing.sosmed = parseInt(document.getElementById('input-marketing-sosmed').value) || 0;
+        gameState.currentMarketing.brosur = parseInt(document.getElementById('input-marketing-brosur').value) || 0;
+        
+        let totalMarketing = gameState.currentMarketing.sosmed + gameState.currentMarketing.brosur;
+
+        if (gameState.money >= totalMarketing) {
+            gameState.money -= totalMarketing;
+        } else {
+            showToast("Uang tidak cukup untuk marketing! Diatur ke Rp 0.", "error");
+            gameState.currentMarketing.sosmed = 0;
+            gameState.currentMarketing.brosur = 0;
+            document.getElementById('input-marketing-sosmed').value = 0;
+            document.getElementById('input-marketing-brosur').value = 0;
+        }
+
+        gameState.todaySold = {hot: 0, iced: 0};
+        gameState.todayMissed = 0;
+        gameState.todayRevenue = 0;
+        gameState.todayCustomerSatisfaction = 100;
+        gameState.todayAges = [];
+        gameState.todayWeather = gameState.forecastWeather; 
+        
+        const weatherIcon = gameState.todayWeather === 'Hujan' ? '🌧️ Hujan' : '☀️ Cerah';
+        document.getElementById('sim-day').innerText = gameState.day;
+        document.getElementById('sim-date-indicator').innerText = `${formatDate(gameState.currentDate)} | ${weatherIcon}`;
+        document.getElementById('sim-sold').innerText = "0 Cup";
+        document.getElementById('sim-missed').innerText = "0 Orang";
+        document.getElementById('floating-texts').innerHTML = '';
+        
+        showScreen('screen-simulation');
+        
+        const dateNum = gameState.currentDate.getDate();
+        let dateFactor = 1.0;
+        let infoTanggal = "Tanggal Biasa";
+        if (dateNum >= 25 || dateNum <= 5) { dateFactor = 1.5; infoTanggal = "Tanggal Muda - Traffic Ramai!"; } 
+        else if (dateNum >= 15 && dateNum <= 24) { dateFactor = 0.7; infoTanggal = "Tanggal Tua - Konsumen Hemat"; }
+
+        let weatherFactor = gameState.todayWeather === 'Hujan' ? 0.6 : 1.0;
+        
+        // SEGMENTASI MARKETING
+        let sosmedFactor = Math.floor(gameState.currentMarketing.sosmed / 4000); // Tiap 4k dapet 1 pelanggan muda
+        let brosurFactor = Math.floor(gameState.currentMarketing.brosur / 6000); // Tiap 6k dapet 1 pelanggan tua/mobil
+        simEngine.marketingRatio = { sosmed: sosmedFactor, brosur: brosurFactor };
+
+        let baseTraffic = 8;
+        let traffic = Math.floor((baseTraffic + sosmedFactor + brosurFactor) * dateFactor * weatherFactor);
+        traffic += Math.floor(Math.random() * 5) - 2; 
+        if(traffic < 0) traffic = 0;
+
+        setTimeout(() => {
+            showFloatingText(`🗓️ ${infoTanggal}`, 'text-blue-700 bg-white/90 px-4 py-2 rounded-lg shadow-lg border border-blue-200', window.innerWidth/2 - 120, 100);
+        }, 1000);
+
+        simEngine.expectedCustomers = traffic;
+        simEngine.spawnedCount = 0;
+        simEngine.simTime = 0;
+        simEngine.speedMultiplier = 1;
+        simEngine.spawnRate = simEngine.expectedCustomers > 0 ? Math.floor(simEngine.simDuration / simEngine.expectedCustomers) : 9999;
+        
+        initThreeJS();
+    }
+
+    function initThreeJS() {
+        const container = document.getElementById('canvas-container');
+        container.innerHTML = ''; 
+        
+        simEngine.scene = new THREE.Scene();
+        const skyColor = gameState.todayWeather === 'Hujan' ? 0x64748b : 0x87ceeb;
+        simEngine.scene.background = new THREE.Color(skyColor); 
+        
+        simEngine.camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+        simEngine.camera.position.set(0, 8, 14);
+        simEngine.camera.lookAt(0, 0, 0);
+        
+        simEngine.renderer = new THREE.WebGLRenderer({ antialias: true });
+        simEngine.renderer.setSize(container.clientWidth, container.clientHeight);
+        simEngine.renderer.shadowMap.enabled = true;
+        container.appendChild(simEngine.renderer.domElement);
+        
+        const ambientLight = new THREE.AmbientLight(0xffffff, gameState.todayWeather === 'Hujan' ? 0.4 : 0.6);
+        simEngine.scene.add(ambientLight);
+        simEngine.dirLight = new THREE.DirectionalLight(0xffffff, gameState.todayWeather === 'Hujan' ? 0.4 : 0.8);
+        simEngine.dirLight.position.set(10, 20, 10);
+        simEngine.dirLight.castShadow = true;
+        simEngine.scene.add(simEngine.dirLight);
+
+        // Hujan
+        simEngine.rainParticles = null;
+        if (gameState.todayWeather === 'Hujan') {
+            const rainGeo = new THREE.BufferGeometry();
+            const rainCount = 1500;
+            const rainArray = new Float32Array(rainCount * 3);
+            for(let i=0; i<rainCount*3; i+=3) {
+                rainArray[i] = (Math.random() - 0.5) * 40; 
+                rainArray[i+1] = Math.random() * 20; 
+                rainArray[i+2] = (Math.random() - 0.5) * 40; 
+            }
+            rainGeo.setAttribute('position', new THREE.BufferAttribute(rainArray, 3));
+            const rainMat = new THREE.PointsMaterial({color: 0xaaccff, size: 0.1, transparent: true, opacity: 0.8});
+            simEngine.rainParticles = new THREE.Points(rainGeo, rainMat);
+            simEngine.scene.add(simEngine.rainParticles);
+        }
+
+        // Lantai & Dekorasi
+        const floorGeo = new THREE.PlaneGeometry(40, 40);
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x88aa88 });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        simEngine.scene.add(floor);
+        
+        const roadGeo = new THREE.PlaneGeometry(8, 40);
+        const roadMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const road = new THREE.Mesh(roadGeo, roadMat);
+        road.rotation.x = -Math.PI / 2; road.position.z = 4; road.receiveShadow = true;
+        simEngine.scene.add(road);
+
+        const counterGeo = new THREE.BoxGeometry(6, 2, 2);
+        const counterMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b });
+        const counter = new THREE.Mesh(counterGeo, counterMat);
+        counter.position.set(0, 1, -2); counter.castShadow = true; counter.receiveShadow = true;
+        simEngine.scene.add(counter);
+
+        const roofGeo = new THREE.BoxGeometry(7, 0.5, 3);
+        const roofMat = new THREE.MeshStandardMaterial({ color: 0xcc4444 });
+        const roof = new THREE.Mesh(roofGeo, roofMat);
+        roof.position.set(0, 4, -2); roof.castShadow = true;
+        simEngine.scene.add(roof);
+
+        const poleGeo = new THREE.CylinderGeometry(0.1, 0.1, 2);
+        const poleMat = new THREE.MeshStandardMaterial({ color: 0xdddddd });
+        const pole1 = new THREE.Mesh(poleGeo, poleMat); pole1.position.set(-3, 3, -1.5);
+        const pole2 = new THREE.Mesh(poleGeo, poleMat); pole2.position.set(3, 3, -1.5);
+        simEngine.scene.add(pole1); simEngine.scene.add(pole2);
+
+        const machineGeo = new THREE.BoxGeometry(1.2, 0.8, 0.6);
+        const machineMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.2, metalness: 0.8 });
+        const machine = new THREE.Mesh(machineGeo, machineMat);
+        machine.position.set(-1.5, 2.4, -2); machine.castShadow = true;
+        simEngine.scene.add(machine);
+
+        // Area Nongkrong
+        simEngine.seats = [];
+        const tablePositions = [{x: -5, z: 0}, {x: 5, z: 0}];
+        tablePositions.forEach(tp => {
+            const tblGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.1);
+            const tblMat = new THREE.MeshStandardMaterial({ color: 0xd2b48c });
+            const tbl = new THREE.Mesh(tblGeo, tblMat);
+            tbl.position.set(tp.x, 1, tp.z); tbl.castShadow = true; simEngine.scene.add(tbl);
+            const legGeo = new THREE.CylinderGeometry(0.1, 0.1, 1);
+            const leg = new THREE.Mesh(legGeo, machineMat);
+            leg.position.set(tp.x, 0.5, tp.z); simEngine.scene.add(leg);
+            
+            simEngine.seats.push({ x: tp.x - 1.2, z: tp.z, occupied: false });
+            simEngine.seats.push({ x: tp.x + 1.2, z: tp.z, occupied: false });
+            simEngine.seats.push({ x: tp.x, z: tp.z - 1.2, occupied: false });
+            
+            simEngine.seats.slice(-3).forEach(s => {
+                const chairGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.5);
+                const chairMat = new THREE.MeshStandardMaterial({color: 0x995522});
+                const chair = new THREE.Mesh(chairGeo, chairMat);
+                chair.position.set(s.x, 0.25, s.z); simEngine.scene.add(chair);
+            });
+        });
+
+        // Barista
+        simEngine.baristas = []; 
+        const visEmployees = Math.min(gameState.employees, 3);
+        for(let e=0; e < visEmployees; e++) {
+            const baristaGroup = new THREE.Group();
+            
+            const bHeadGeo = new THREE.BoxGeometry(0.35, 0.35, 0.35);
+            const bHeadMat = new THREE.MeshStandardMaterial({ color: 0xf1c27d });
+            const bHead = new THREE.Mesh(bHeadGeo, bHeadMat); bHead.position.y = 1.2;
+            baristaGroup.add(bHead);
+
+            const bBodyGeo = new THREE.BoxGeometry(0.4, 0.5, 0.2);
+            const bBodyMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 }); 
+            const bBody = new THREE.Mesh(bBodyGeo, bBodyMat); bBody.position.y = 0.8;
+            baristaGroup.add(bBody);
+
+            const bArmGeo = new THREE.BoxGeometry(0.12, 0.4, 0.12);
+            const bArmMat = new THREE.MeshStandardMaterial({ color: 0xf1c27d });
+            const leftArm = new THREE.Mesh(bArmGeo, bArmMat); leftArm.position.set(-0.25, 0.9, 0);
+            const rightArm = new THREE.Mesh(bArmGeo, bArmMat); rightArm.position.set(0.25, 0.9, 0);
+            baristaGroup.add(leftArm); baristaGroup.add(rightArm);
+
+            baristaGroup.position.set((e - (visEmployees-1)/2) * 1.5, 1.5, -2.8); 
+            baristaGroup.userData = { leftArm: leftArm, rightArm: rightArm, workTime: Math.random() * 100 };
+            
+            simEngine.scene.add(baristaGroup);
+            simEngine.baristas.push(baristaGroup);
+        }
+
+        simEngine.customers = [];
+        simEngine.isRunning = true;
+        simEngine.framesSinceLastSpawn = 0;
+        
+        animate();
+    }
+
+    function createCustomer() {
+        const customerWrapper = new THREE.Group();
+        const characterGroup = new THREE.Group();
+        
+        // PENGARUH MARKETING TERHADAP DEMOGRAFI
+        let totMarket = simEngine.marketingRatio.sosmed + simEngine.marketingRatio.brosur + 0.1;
+        let isSosmedDriven = Math.random() < (simEngine.marketingRatio.sosmed / totMarket);
+        
+        const isFemale = Math.random() > 0.5;
+        // Sosmed menarik anak muda, Brosur menarik orang dewasa
+        const age = isSosmedDriven ? (Math.floor(Math.random() * 15) + 15) : (Math.floor(Math.random() * 30) + 25);
+        const isChild = age < 15;
+        
+        let transportMode = 'walk'; 
+        // Orang dewasa yg tertarik brosur lebih banyak pakai mobil
+        if (!isSosmedDriven && age > 25 && Math.random() > 0.4) transportMode = 'car';
+        else if (age > 18 && Math.random() > 0.7) transportMode = 'motor';
+        if (isChild) transportMode = 'walk'; 
+
+        const colors = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899];
+        const skinColors = [0xffdbac, 0xf1c27d, 0xe0ac69, 0x8d5524];
+        const shirtColor = colors[Math.floor(Math.random() * colors.length)];
+        const skinColor = skinColors[Math.floor(Math.random() * skinColors.length)];
+
+        const headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+        const headMat = new THREE.MeshStandardMaterial({ color: skinColor });
+        const head = new THREE.Mesh(headGeo, headMat); head.position.y = 1.3; head.castShadow = true;
+        characterGroup.add(head);
+
+        if (isFemale) {
+            const hairGeo = new THREE.BoxGeometry(0.42, 0.45, 0.42);
+            const hairMat = new THREE.MeshStandardMaterial({ color: 0x221111 }); 
+            const hair = new THREE.Mesh(hairGeo, hairMat);
+            hair.position.y = 1.35; hair.position.z = -0.05;
+            characterGroup.add(hair);
+        }
+
+        const bodyGeo = new THREE.BoxGeometry(0.5, 0.6, 0.3);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: shirtColor });
+        const body = new THREE.Mesh(bodyGeo, bodyMat); body.position.y = 0.8; body.castShadow = true;
+        characterGroup.add(body);
+
+        const legGeo = new THREE.BoxGeometry(0.2, 0.5, 0.2);
+        const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b }); 
+        const leftLeg = new THREE.Mesh(legGeo, pantsMat); leftLeg.position.set(-0.15, 0.25, 0); leftLeg.castShadow = true;
+        const rightLeg = new THREE.Mesh(legGeo, pantsMat); rightLeg.position.set(0.15, 0.25, 0); rightLeg.castShadow = true;
+        characterGroup.add(leftLeg); characterGroup.add(rightLeg);
+
+        if (isChild) {
+            characterGroup.scale.set(0.65, 0.65, 0.65);
+            characterGroup.position.y = -0.15; 
+        }
+
+        let spaceRequired = 1.5; 
+        
+        if (transportMode === 'car') {
+            const carGroup = new THREE.Group();
+            const carMat = new THREE.MeshStandardMaterial({color: colors[Math.floor(Math.random()*colors.length)]});
+            const cBody = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.8, 3.0), carMat); cBody.position.y = 0.6; cBody.castShadow = true;
+            const cTop = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.6, 1.5), new THREE.MeshStandardMaterial({color: 0x111111})); cTop.position.set(0, 1.2, 0); cTop.castShadow = true;
+            carGroup.add(cBody); carGroup.add(cTop);
+            
+            const tireMat = new THREE.MeshStandardMaterial({color: 0x050505});
+            const tireGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2);
+            const positions = [[-0.9, 0.3, 1], [0.9, 0.3, 1], [-0.9, 0.3, -1], [0.9, 0.3, -1]];
+            positions.forEach(pos => {
+                const t = new THREE.Mesh(tireGeo, tireMat);
+                t.rotation.z = Math.PI / 2; t.position.set(...pos); carGroup.add(t);
+            });
+            
+            characterGroup.position.set(0, 0.4, 0); 
+            customerWrapper.add(carGroup);
+            spaceRequired = 3.5; 
+        } else if (transportMode === 'motor') {
+            const motorGroup = new THREE.Group();
+            const mMat = new THREE.MeshStandardMaterial({color: 0x333333});
+            const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 1.6), mMat); mBody.position.y = 0.5; mBody.castShadow = true;
+            motorGroup.add(mBody);
+            
+            const tireMat = new THREE.MeshStandardMaterial({color: 0x050505});
+            const tireGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.1);
+            [-0.6, 0.6].forEach(zPos => {
+                const t = new THREE.Mesh(tireGeo, tireMat);
+                t.rotation.z = Math.PI / 2; t.position.set(0, 0.35, zPos); motorGroup.add(t);
+            });
+            
+            characterGroup.position.set(0, 0.3, 0); 
+            customerWrapper.add(motorGroup);
+            spaceRequired = 2.2;
+        }
+
+        customerWrapper.add(characterGroup);
+        customerWrapper.position.set((Math.random() - 0.5) * 4, 0, 12 + Math.random() * 4);
+        
+        customerWrapper.userData = {
+            state: 'walking_in', targetZ: -0.5, waitTimer: 0, hangoutTimer: 0, hasDecided: false,
+            leftLeg: leftLeg, rightLeg: rightLeg, walkTime: Math.random() * 100, 
+            age: age, isFemale: isFemale, transport: transportMode, space: spaceRequired, seat: null, characterRef: characterGroup
+        };
+        
+        simEngine.scene.add(customerWrapper);
+        simEngine.customers.push(customerWrapper);
+        
+        let emoji = isChild ? '👦' : (isFemale ? '👩' : '👨');
+        let trIcon = transportMode === 'car' ? '🚗 Mobil' : (transportMode === 'motor' ? '🏍️ Motor' : '');
+        setTimeout(() => {
+            const p = getScreenPosition(customerWrapper.position);
+            showFloatingText(`${emoji} ${trIcon}`, 'text-slate-700 text-sm bg-white/70 px-2 rounded shadow', p.x, p.y-50);
+        }, 100);
+    }
+
+    function showFloatingText(text, colorClass, x, y) {
+        const div = document.createElement('div');
+        div.className = `absolute font-bold text-xl ${colorClass} transition-all duration-1000 opacity-100 whitespace-nowrap`;
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.innerText = text;
+        document.getElementById('floating-texts').appendChild(div);
+        
+        setTimeout(() => {
+            div.style.transform = 'translateY(-50px)';
+            div.style.opacity = '0';
+        }, 50);
+        setTimeout(() => { div.remove(); }, 1050);
+    }
+
+    function getScreenPosition(position) {
+        if(!simEngine.camera || !simEngine.renderer) return {x:0, y:0};
+        const vector = position.clone();
+        vector.project(simEngine.camera);
+        const w = simEngine.renderer.domElement.clientWidth;
+        const h = simEngine.renderer.domElement.clientHeight;
+        return { x: (vector.x * 0.5 + 0.5) * w, y: (vector.y * -0.5 + 0.5) * h };
+    }
+
+    function animate() {
+        if (!simEngine.isRunning) return;
+        simEngine.animationId = requestAnimationFrame(animate);
+
+        for (let s = 0; s < simEngine.speedMultiplier; s++) {
+            simEngine.simTime++;
+            simEngine.framesSinceLastSpawn++;
+
+            const progress = simEngine.simTime / simEngine.simDuration;
+            const hour = 8 + Math.floor(progress * 9);
+            const minute = Math.floor(((simEngine.simTime % (simEngine.simDuration/9)) / (simEngine.simDuration/9)) * 60);
+            document.getElementById('sim-time').innerText = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+            let baseSkyColor = gameState.todayWeather === 'Hujan' ? new THREE.Color(0x64748b) : new THREE.Color(0x87ceeb);
+            let eveningSkyColor = gameState.todayWeather === 'Hujan' ? new THREE.Color(0x334155) : new THREE.Color(0xfd5e53);
+            simEngine.scene.background.lerpColors(baseSkyColor, eveningSkyColor, progress);
+            
+            let maxLight = gameState.todayWeather === 'Hujan' ? 0.4 : 0.8;
+            simEngine.dirLight.intensity = maxLight - (progress * (maxLight/2));
+
+            if (simEngine.rainParticles) {
+                const positions = simEngine.rainParticles.geometry.attributes.position.array;
+                for(let i=1; i<positions.length; i+=3) {
+                    positions[i] -= 0.6; 
+                    if (positions[i] < 0) positions[i] = 20; 
+                }
+                simEngine.rainParticles.geometry.attributes.position.needsUpdate = true;
+            }
+
+            simEngine.baristas.forEach(b => {
+                b.userData.workTime += 0.2;
+                b.userData.leftArm.rotation.x = Math.sin(b.userData.workTime) * 0.5 - 0.2;
+                b.userData.rightArm.rotation.x = Math.cos(b.userData.workTime) * 0.5 - 0.2;
+            });
+
+            if (simEngine.spawnedCount < simEngine.expectedCustomers && simEngine.framesSinceLastSpawn >= simEngine.spawnRate) {
+                createCustomer();
+                simEngine.spawnedCount++;
+                simEngine.framesSinceLastSpawn = 0;
+                simEngine.spawnRate = Math.floor(simEngine.simDuration / simEngine.expectedCustomers) + (Math.floor(Math.random() * 20) - 10);
+            }
+
+            let currentZSpace = -0.5;
+            for (let i = 0; i < simEngine.customers.length; i++) {
+                let c = simEngine.customers[i];
+                if (c.userData.state !== 'walking_out' && c.userData.state !== 'hanging_out' && c.userData.state !== 'walking_to_seat') {
+                    c.userData.targetZ = currentZSpace;
+                    currentZSpace += c.userData.space; 
+                }
+            }
+
+            for (let i = simEngine.customers.length - 1; i >= 0; i--) {
+                let c = simEngine.customers[i];
+                let isMoving = false;
+                if (c.userData.state === 'walking_in' || c.userData.state === 'walking_out' || c.userData.state === 'walking_to_seat' ||
+                   (c.userData.state === 'buying' && c.position.z > c.userData.targetZ + 0.05)) {
+                    isMoving = true;
+                }
+
+                if (isMoving && c.userData.transport === 'walk') {
+                    c.userData.walkTime += 0.2;
+                    c.userData.leftLeg.position.z = Math.sin(c.userData.walkTime) * 0.2;
+                    c.userData.rightLeg.position.z = Math.sin(c.userData.walkTime + Math.PI) * 0.2;
+                    c.userData.leftLeg.rotation.x = Math.sin(c.userData.walkTime) * 0.5;
+                    c.userData.rightLeg.rotation.x = Math.sin(c.userData.walkTime + Math.PI) * 0.5;
+                } else {
+                    c.userData.leftLeg.position.z = 0; c.userData.rightLeg.position.z = 0;
+                    c.userData.leftLeg.rotation.x = 0; c.userData.rightLeg.rotation.x = 0;
+                }
+
+                if (c.userData.state === 'walking_in') {
+                    let speed = c.userData.transport === 'walk' ? 0.05 : 0.15; 
+                    if (c.position.z > c.userData.targetZ) { c.position.z -= speed; } 
+                    else { c.userData.state = 'buying'; }
+                } 
+                else if (c.userData.state === 'buying') {
+                    let speed = c.userData.transport === 'walk' ? 0.05 : 0.15;
+                    if (c.position.z > c.userData.targetZ + 0.05) { c.position.z -= speed; }
+
+                    if (c.position.z <= -0.4) {
+                        c.userData.waitTimer++;
+                        const decisionTime = Math.max(10, 40 - (gameState.employees * 8));
+                        
+                        if (c.userData.waitTimer === 1) {
+                            // TENTUKAN PRODUK YANG INGIN DIBELI SAAT DI KASIR
+                            let pref = 'hot';
+                            if (gameState.todayWeather === 'Hujan') pref = Math.random() < 0.8 ? 'hot' : 'iced'; // Hujan = 80% Kopi Panas
+                            else pref = Math.random() < 0.7 ? 'iced' : 'hot'; // Cerah = 70% Es Kopi
+                            c.userData.pref = pref;
+
+                            const screenPos = getScreenPosition(c.position);
+                            let productIcon = pref === 'hot' ? '☕ Panas' : '🧊 Es Kopi';
+                            showFloatingText(`Usia: ${c.userData.age}th | Ingin ${productIcon}`, 'text-slate-800 text-xs bg-white/90 px-2 py-1 rounded shadow-lg border border-slate-200', screenPos.x - 30, screenPos.y - 80);
+                        }
+                        
+                        if (c.userData.waitTimer > decisionTime && !c.userData.hasDecided) {
+                            c.userData.hasDecided = true;
+                            
+                            let pref = c.userData.pref;
+                            let targetPrice = pref === 'hot' ? gameState.currentPrice.hot : gameState.currentPrice.iced;
+                            let targetStock = pref === 'hot' ? gameState.inventory.hot : gameState.inventory.iced;
+
+                            let buyProbability = 1.0;
+                            let maxPrice = 40000;
+                            if (c.userData.age < 25) maxPrice = 30000; // Anak muda dompet tipis
+                            
+                            if (targetPrice > 20000) buyProbability = 1.0 - ((targetPrice - 20000) / (maxPrice - 20000));
+                            buyProbability += (Math.random() * 0.2 - 0.1); 
+                            
+                            const dateNum = gameState.currentDate.getDate();
+                            if (dateNum >= 15 && dateNum <= 24) buyProbability -= 0.15;
+                            // Tambahan preferensi cuaca kuat terhadap harga
+                            if (gameState.todayWeather === 'Hujan' && pref === 'hot') buyProbability += 0.3; 
+                            
+                            const screenPos = getScreenPosition(c.position);
+
+                            if (targetStock > 0 && Math.random() < buyProbability) {
+                                // BERHASIL BELI
+                                if (pref === 'hot') { gameState.inventory.hot--; gameState.todaySold.hot++; }
+                                else { gameState.inventory.iced--; gameState.todaySold.iced++; }
+                                
+                                gameState.todayRevenue += targetPrice; gameState.money += targetPrice;
+                                gameState.todayAges.push(c.userData.age); 
+                                
+                                // Render Cup Kopi Berbeda 3D
+                                const cupGroup = new THREE.Group();
+                                if (pref === 'hot') {
+                                    const cupGeo = new THREE.CylinderGeometry(0.06, 0.04, 0.15);
+                                    const cupMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+                                    const cup = new THREE.Mesh(cupGeo, cupMat);
+                                    cupGroup.add(cup);
+                                } else {
+                                    // Es Kopi pakai cup bening + sedotan hitam
+                                    const cupGeo = new THREE.CylinderGeometry(0.06, 0.05, 0.18);
+                                    const cupMat = new THREE.MeshPhysicalMaterial({ color: 0xaaccff, transmission: 0.7, opacity: 0.8, transparent: true });
+                                    const cup = new THREE.Mesh(cupGeo, cupMat);
+                                    const strawGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.25);
+                                    const strawMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+                                    const straw = new THREE.Mesh(strawGeo, strawMat);
+                                    straw.position.y = 0.05; straw.rotation.z = 0.2;
+                                    cupGroup.add(cup); cupGroup.add(straw);
+                                }
+                                cupGroup.position.set(0.3, 0.8, 0.2);
+                                c.userData.characterRef.add(cupGroup);
+
+                                showFloatingText(`😊 +${formatRp(targetPrice)}`, 'text-green-500', screenPos.x, screenPos.y - 40);
+                                document.getElementById('sim-sold').innerText = `${gameState.todaySold.hot + gameState.todaySold.iced} Cup`;
+
+                                if (c.userData.transport === 'walk' && Math.random() < 0.4) { 
+                                    let emptySeat = simEngine.seats.find(s => !s.occupied);
+                                    if (emptySeat) {
+                                        emptySeat.occupied = true; c.userData.seat = emptySeat; c.userData.state = 'walking_to_seat';
+                                    }
+                                }
+                                
+                            } else {
+                                // GAGAL BELI
+                                gameState.todayMissed++;
+                                const waitPenalty = (gameState.employees < Math.ceil(simEngine.expectedCustomers / 10)) ? 1.5 : 1;
+                                gameState.todayCustomerSatisfaction -= ((100 / simEngine.expectedCustomers) * waitPenalty); 
+                                
+                                let isHabis = targetStock <= 0;
+                                let reason = isHabis ? `Stok ${pref === 'hot' ? 'Panas' : 'Es'} Habis!` : "Mahal/Lama!";
+                                showFloatingText(`${isHabis ? "😭" : "😠"} ${reason}`, 'text-red-500', screenPos.x, screenPos.y - 40);
+                                document.getElementById('sim-missed').innerText = `${gameState.todayMissed} Orang`;
+                            }
+                        }
+                        
+                        if (c.userData.waitTimer > decisionTime + 30 && c.userData.state === 'buying') {
+                            c.userData.state = 'walking_out';
+                            c.userData.exitDir = c.position.x > 0 ? 1 : -1;
+                        }
+                    } else {
+                        c.userData.waitTimer += 0.2;
+                    }
+                }
+                else if (c.userData.state === 'walking_to_seat') {
+                    let dx = c.userData.seat.x - c.position.x;
+                    let dz = c.userData.seat.z - c.position.z;
+                    let dist = Math.sqrt(dx*dx + dz*dz);
+                    if (dist > 0.1) {
+                        c.position.x += (dx/dist) * 0.05;
+                        c.position.z += (dz/dist) * 0.05;
+                    } else {
+                        c.userData.state = 'hanging_out';
+                        showFloatingText(`💬 Nongkrong...`, 'text-amber-500 text-sm', getScreenPosition(c.position).x, getScreenPosition(c.position).y - 50);
+                    }
+                }
+                else if (c.userData.state === 'hanging_out') {
+                    c.userData.hangoutTimer++;
+                    if (c.userData.hangoutTimer > 150) { 
+                        c.userData.seat.occupied = false;
+                        c.userData.state = 'walking_out';
+                        c.userData.exitDir = Math.random() > 0.5 ? 1 : -1;
+                    }
+                }
+                else if (c.userData.state === 'walking_out') {
+                    let speed = c.userData.transport === 'walk' ? 0.05 : 0.2;
+                    c.position.z += speed;
+                    c.position.x += 0.02 * c.userData.exitDir;
+                    if (c.position.z > 15) {
+                        simEngine.scene.remove(c);
+                        simEngine.customers.splice(i, 1);
+                    }
+                }
+            }
+
+            if (simEngine.simTime >= simEngine.simDuration) {
+                endSimulationDay();
+                break; 
+            }
+        }
+        
+        simEngine.renderer.render(simEngine.scene, simEngine.camera);
+    }
+
+    function fastForward() { simEngine.speedMultiplier = 5; }
+
+    function endSimulationDay() {
+        simEngine.isRunning = false;
+        cancelAnimationFrame(simEngine.animationId);
+        
+        if(gameState.todayCustomerSatisfaction < 0) gameState.todayCustomerSatisfaction = 0;
+
+        const dailySalaryTotal = (gameState.employees > 1) ? (gameState.employees - 1) * gameState.employeeSalary : 0;
+        gameState.money -= dailySalaryTotal;
+
+        // Hitung HPP gabungan (Hot + Iced)
+        let costOfGoodsSold = (gameState.todaySold.hot * gameState.costPerCup.hot) + (gameState.todaySold.iced * gameState.costPerCup.iced);
+        let totalCost = costOfGoodsSold + gameState.currentMarketing.sosmed + gameState.currentMarketing.brosur + dailySalaryTotal;
+        let profit = gameState.todayRevenue - totalCost;
+
+        let sumAge = gameState.todayAges.reduce((a,b) => a+b, 0);
+        let avgAge = gameState.todayAges.length > 0 ? Math.round(sumAge / gameState.todayAges.length) : 0;
+
+        gameState.history.push({
+            day: gameState.day,
+            date: new Date(gameState.currentDate),
+            revenue: gameState.todayRevenue,
+            profit: profit,
+            sold: { hot: gameState.todaySold.hot, iced: gameState.todaySold.iced },
+            totalCustomers: simEngine.expectedCustomers,
+            satisfaction: gameState.todayCustomerSatisfaction,
+            avgAge: avgAge,
+            employees: gameState.employees,
+            weather: gameState.todayWeather 
+        });
+
+        gameState.forecastWeather = Math.random() < 0.3 ? 'Hujan' : 'Cerah';
+        
+        gameState.day++;
+        gameState.currentDate.setDate(gameState.currentDate.getDate() + 1);
+        
+        const aiOutput = document.getElementById('ai-consultant-output');
+        if(aiOutput) aiOutput.innerHTML = `<span class="text-slate-500 italic">Data terbaru Hari ke-${gameState.day - 1} telah masuk. Klik tombol "Minta Saran Strategi" untuk analisis terbaru.</span>`;
+
+        updateDashboardUI();
+        showScreen('screen-dashboard');
+        
+        let totalSoldToday = gameState.todaySold.hot + gameState.todaySold.iced;
+        document.getElementById('rekap-tanggal').innerText = `Tanggal: ${formatDate(gameState.history[gameState.history.length-1].date)} (${gameState.history[gameState.history.length-1].weather})`;
+        document.getElementById('rekap-terjual').innerText = `${totalSoldToday} Cup (${gameState.todaySold.hot} Panas, ${gameState.todaySold.iced} Es)`;
+        document.getElementById('rekap-pendapatan').innerText = formatRp(gameState.todayRevenue);
+        document.getElementById('rekap-biaya').innerText = formatRp(totalCost);
+        document.getElementById('rekap-profit').innerText = formatRp(profit);
+        document.getElementById('rekap-profit').className = profit >= 0 ? 'font-bold text-indigo-600' : 'font-bold text-red-600';
+        
+        document.getElementById('rekap-modal').classList.remove('hidden');
+        document.getElementById('rekap-modal').classList.add('flex');
+    }
+
+    window.addEventListener('resize', () => {
+        if (simEngine.camera && simEngine.renderer) {
+            const container = document.getElementById('canvas-container');
+            simEngine.camera.aspect = container.clientWidth / container.clientHeight;
+            simEngine.camera.updateProjectionMatrix();
+            simEngine.renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+    });
+
+    window.onload = () => { showScreen('screen-menu'); };
+
+    // --- GEMINI AI INTEGRATION ---
+    async function fetchGeminiWithRetry(prompt, retries = 5) {
+        const apiKey = ""; 
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }],
+            systemInstruction: { parts: [{ text: "Anda adalah pakar Business Intelligence dan analis data. Berikan saran strategis padat (maks 3 kalimat) kepada manajer kedai kopi. Analisis data tren penjualan Kopi Panas vs Es Kopi, ROI Marketing (Sosmed vs Brosur), Cuaca, dan demografi pelanggan. Beri saran penyesuaian Stok, Harga, atau Budget Iklan." }] }
+        };
+
+        let delay = 1000;
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                if (i === retries - 1) throw error;
+                await new Promise(res => setTimeout(res, delay));
+                delay *= 2;
+            }
+        }
+    }
+
+    async function getAIConsultantAdvice() {
+        const btn = document.getElementById('btn-ai-consultant');
+        const output = document.getElementById('ai-consultant-output');
+        
+        if (gameState.history.length === 0) {
+            output.innerHTML = `<span class="text-amber-600 font-medium"><i class="fa-solid fa-triangle-exclamation"></i> Jalankan simulasi minimal 1 hari dulu agar AI memiliki data awal.</span>`;
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Menganalisis Product Mix...`;
+        output.innerHTML = `<span class="text-indigo-500 font-medium animate-pulse">✨ Membaca data Kopi Panas vs Es, efisiensi ads sosmed vs brosur...</span>`;
+
+        const recentData = gameState.history.slice(-3).map(h => ({
+            hariKe: h.day,
+            profit: h.profit,
+            terjualPanas: h.sold.hot,
+            terjualEs: h.sold.iced,
+            kepuasan: h.satisfaction,
+            rataUsia: h.avgAge,
+            cuacaKemarin: h.weather
+        }));
+        
+        const dateNum = gameState.currentDate.getDate();
+        let statusTanggal = (dateNum >= 25 || dateNum <= 5) ? "Tanggal Muda" : ((dateNum >= 15 && dateNum <= 24) ? "Tanggal Tua" : "Tanggal Biasa");
+
+        const prompt = `Kondisi HARI INI: 
+- Waktu: ${formatDate(gameState.currentDate)} (${statusTanggal})
+- PRAKIRAAN CUACA: ${gameState.forecastWeather} (Hujan mendongkrak Panas, Cerah mendongkrak Es)
+- Uang Kas: Rp ${gameState.money}
+- Sisa Stok Kopi: Panas ${gameState.inventory.hot} cup, Es ${gameState.inventory.iced} cup.
+- Strategi kemarin: Harga (Panas Rp ${gameState.currentPrice.hot}, Es Rp ${gameState.currentPrice.iced}), Marketing (Sosmed Rp ${gameState.currentMarketing.sosmed}, Brosur Rp ${gameState.currentMarketing.brosur}).
+Data performa (maks 3 hari terakhir): ${JSON.stringify(recentData)}.
+
+Tugas Anda: Berdasarkan metrik tersebut, apa strategi spesifik yang harus saya ambil HARI INI?`;
+
+        try {
+            const advice = await fetchGeminiWithRetry(prompt);
+            const formattedAdvice = advice.replace(/\*\*(.*?)\*\*/g, '<strong class="text-indigo-900">$1</strong>');
+            output.innerHTML = `<span class="text-slate-800 text-base md:text-lg leading-relaxed">✨ ${formattedAdvice}</span>`;
+        } catch (e) {
+            console.error("Gemini API Error:", e);
+            output.innerHTML = `<span class="text-red-500"><i class="fa-solid fa-circle-xmark"></i> Gagal menghubungi AI. Silakan periksa koneksi internet Anda.</span>`;
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `✨ Minta Saran Strategi`;
+        }
+    }
+
+</script>
+
+</body>
+</html>
