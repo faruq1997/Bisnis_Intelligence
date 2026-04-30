@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI Plant vs Zombies</title>
+    <style>
+        :root {
+            --grass-color: #27ae60;
+            --sky-color: #34495e;
+            --ui-bg: #ecf0f1;
+            --text-dark: #2c3e50;
+            --btn-bg: #3498db;
+            --btn-hover: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a252f;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+            color: #2ecc71;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Screen Management */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--ui-bg);
+            color: var(--text-dark);
+        }
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- SETUP SCREEN --- */
+        #setup-screen {
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .setup-group {
+            margin-bottom: 25px;
+        }
+        .setup-group label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        #nim-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        #nim-error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .char-card {
+            border: 3px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: white;
+        }
+        .char-card:hover {
+            border-color: #3498db;
+            background-color: #ebf5fb;
+        }
+        .char-card.selected {
+            border-color: #2ecc71;
+            background-color: #e8f8f5;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+        .char-card svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 5px;
+        }
+        .char-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        #btn-start {
+            width: 100%;
+            padding: 15px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #btn-start:hover {
+            background-color: #27ae60;
+        }
+
+        /* --- GAME SCREEN --- */
+        #game-container {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(to bottom, #34495e 0%, #2c3e50 100%);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid #1abc9c;
+        }
+
+        .sun {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #f1c40f;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #f39c12;
+            animation: pulse 3s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .grass {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 120px;
+            background: repeating-linear-gradient(
+                90deg,
+                #27ae60,
+                #27ae60 40px,
+                #2ecc71 40px,
+                #2ecc71 80px
+            );
+            box-shadow: inset 0 20px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Characters in Game */
+        #plant {
+            position: absolute;
+            bottom: 90px;
+            left: 5%; 
+            width: 90px;
+            height: 90px;
+            z-index: 10;
+            transition: transform 0.1s;
+        }
+
+        #zombie {
+            position: absolute;
+            bottom: 90px;
+            left: 80%; 
+            width: 100px;
+            height: 130px;
+            z-index: 10;
+            transition: left 0.5s ease-in-out, filter 0.2s;
+        }
+
+        .pea {
+            position: absolute;
+            bottom: 130px;
+            width: 20px;
+            height: 20px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #27ae60;
+            z-index: 5;
+            display: none;
+        }
+
+        /* UI Container Game */
+        #ui-container {
+            width: 100%;
+            padding: 25px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .player-info {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+
+        #progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #bdc3c7;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #2ecc71;
+            transition: width 0.3s;
+        }
+
+        #status-message {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+            min-height: 22px;
+        }
+
+        #question-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        #answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            #answers-grid {
+                grid-template-columns: 1fr;
+            }
+            .character-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-answer {
+            padding: 15px;
+            background-color: var(--btn-bg);
+            color: white;
+            border: 2px solid #2980b9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #2980b9;
+        }
+
+        .btn-answer:hover {
+            background-color: #2980b9;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1c5980;
+        }
+
+        .btn-answer:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #1c5980;
+        }
+
+        /* Modal Overlay */
+        #modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #modal-overlay h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        #modal-overlay button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #f1c40f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        #modal-overlay button:hover {
+            background-color: #f39c12;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>BI Plant vs Zombies</h1>
+
+    <!-- LAYAR SETUP -->
+    <div id="setup-screen" class="screen active">
+        <h2 style="margin-top: 0; text-align: center;">Persiapan Pertempuran</h2>
+        
+        <div class="setup-group">
+            <label for="nim-input">Masukkan NIM (8 Digit):</label>
+            <input type="text" id="nim-input" placeholder="Contoh: 12345678" maxlength="8">
+            <div id="nim-error">NIM harus terdiri dari tepat 8 digit angka!</div>
+        </div>
+
+        <div class="setup-group">
+            <label>Pilih Jagoan Plant:</label>
+            <div class="character-grid" id="plant-selection">
+                <div class="char-card selected" data-plant="peashooter">
+                    <svg viewBox="0 0 100 100">
+                        <!-- Peashooter Icon -->
+                        <path d="M50,90 Q40,60 50,50" stroke="#2ecc71" stroke-width="8" fill="none"/>
+                        <circle cx="45" cy="40" r="25" fill="#2ecc71"/>
+                        <path d="M50,25 L85,25 L85,55 L50,55 Z" fill="#2ecc71" rx="5"/>
+                    </svg>
+                    <div class="char-name">Peashooter</div>
+                </div>
+                <div class="char-card" data-plant="sunflower">
+                    <svg viewBox="0 0 100 100">
+                        <!-- Sunflower Icon -->
+                        <path d="M50,90 Q40,60 50,50" stroke="#2ecc71" stroke-width="8" fill="none"/>
+                        <circle cx="50" cy="40" r="30" fill="#f1c40f"/>
+                        <circle cx="50" cy="40" r="20" fill="#8e44ad"/>
+                    </svg>
+                    <div class="char-name">Sunflower</div>
+                </div>
+                <div class="char-card" data-plant="cactus">
+                    <svg viewBox="0 0 100 100">
+                        <!-- Cactus Icon -->
+                        <rect x="35" y="20" width="30" height="70" rx="15" fill="#27ae60"/>
+                        <path d="M35,40 Q20,40 20,25" stroke="#27ae60" stroke-width="8" fill="none" stroke-linecap="round"/>
+                        <path d="M65,55 Q80,55 80,40" stroke="#27ae60" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <div class="char-name">Cactus</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="setup-group">
+            <label>Pilih Musuh Zombie:</label>
+            <div class="character-grid" id="zombie-selection">
+                <div class="char-card selected" data-zombie="normal">
+                    <svg viewBox="0 0 100 130">
+                        <rect x="25" y="10" width="50" height="45" fill="#1abc9c" rx="8"/>
+                        <circle cx="40" cy="25" r="7" fill="white"/>
+                        <circle cx="60" cy="25" r="7" fill="white"/>
+                    </svg>
+                    <div class="char-name">Normal Zombie</div>
+                </div>
+                <div class="char-card" data-zombie="conehead">
+                    <svg viewBox="0 0 100 130">
+                        <polygon points="25,10 75,10 50,-20" fill="#e67e22"/>
+                        <rect x="25" y="10" width="50" height="45" fill="#1abc9c" rx="8"/>
+                        <circle cx="40" cy="25" r="7" fill="white"/>
+                        <circle cx="60" cy="25" r="7" fill="white"/>
+                    </svg>
+                    <div class="char-name">Conehead</div>
+                </div>
+                <div class="char-card" data-zombie="buckethead">
+                    <svg viewBox="0 0 100 130">
+                        <path d="M25,10 L75,10 L65,-15 L35,-15 Z" fill="#95a5a6"/>
+                        <rect x="25" y="10" width="50" height="45" fill="#1abc9c" rx="8"/>
+                        <circle cx="40" cy="25" r="7" fill="white"/>
+                        <circle cx="60" cy="25" r="7" fill="white"/>
+                    </svg>
+                    <div class="char-name">Buckethead</div>
+                </div>
+            </div>
+        </div>
+
+        <button id="btn-start" onclick="validateAndStart()">Mulai Bermain</button>
+    </div>
+
+    <!-- LAYAR GAME -->
+    <div id="game-screen" class="screen">
+        <div id="game-container">
+            <div class="sun"></div>
+            <div class="grass"></div>
+            
+            <!-- SVG Plant (Dinamis) -->
+            <svg id="plant" viewBox="0 0 100 100"></svg>
+
+            <!-- Proyektil (Dinamis) -->
+            <div id="pea" class="pea"></div>
+
+            <!-- SVG Zombie (Dinamis) -->
+            <svg id="zombie" viewBox="0 0 100 130"></svg>
+
+            <!-- Modal Overlay -->
+            <div id="modal-overlay">
+                <h2 id="modal-title">Game Over</h2>
+                <p id="modal-desc">Zombie telah memakan BI Plant Anda!</p>
+                <button onclick="backToSetup()">Kembali ke Menu</button>
+            </div>
+        </div>
+
+        <div id="ui-container">
+            <div class="player-info" id="display-nim">NIM: -</div>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="status-message" style="color: #7f8c8d;">Persiapkan dirimu, Zombie datang!</div>
+            <div id="question-text">Loading...</div>
+            <div id="answers-grid">
+                <!-- Pilihan jawaban -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Base Pertanyaan
+        const baseQuestionsData = [
+            {
+                q: "Salah satu pekerjaan utama Business Intelligence Analyst adalah...",
+                options: ["Memperbaiki hardware", "Menulis kode sistem operasi", "Menafsirkan data", "Membuat desain logo"],
+                answerString: "Menafsirkan data"
+            },
+            {
+                q: "Apa tujuan utama dari Business Intelligence di sebuah perusahaan?",
+                options: ["Mendukung pengambilan keputusan bisnis", "Merekrut karyawan baru", "Mengelola media sosial", "Memproduksi barang pabrik"],
+                answerString: "Mendukung pengambilan keputusan bisnis"
+            },
+            {
+                q: "Tanggung jawab Business Intelligence Analyst meliputi...",
+                options: ["Menjual produk secara langsung", "Membagikan hasil penemuan data", "Membersihkan kantor", "Memperbaiki jaringan internet"],
+                answerString: "Membagikan hasil penemuan data"
+            },
+            {
+                q: "Manakah di bawah ini yang BUKAN Skill Wajib Business Intelligence Analyst?",
+                options: ["Berpikir Analitis", "Pemahaman Tools Database", "Penelitian (Researcher)", "Reaktif (Bertindak tanpa data)"],
+                answerString: "Reaktif (Bertindak tanpa data)"
+            },
+            {
+                q: "Proses mengekstrak, mengubah, dan memuat data mentah ke dalam sistem disebut...",
+                options: ["SEO (Search Engine)", "ETL (Extract, Transform, Load)", "CRM (Customer Relationship)", "ERP (Enterprise Resource)"],
+                answerString: "ETL (Extract, Transform, Load)"
+            },
+            {
+                q: "Tools perangkat lunak yang sering digunakan BI Analyst untuk Visualisasi Data adalah...",
+                options: ["Adobe Photoshop", "Microsoft Word", "Tableau / Power BI", "Visual Studio Code"],
+                answerString: "Tableau / Power BI"
+            },
+            {
+                q: "Apa fungsi utama dari Dashboard dalam Business Intelligence?",
+                options: ["Menyimpan file musik", "Menampilkan metrik utama secara visual", "Mengirim email massal", "Melakukan panggilan telepon"],
+                answerString: "Menampilkan metrik utama secara visual"
+            },
+            {
+                q: "Sistem yang digunakan untuk menyimpan data historis dalam jumlah besar untuk analisis disebut...",
+                options: ["Data Warehouse", "Flashdisk", "RAM", "Recycle Bin"],
+                answerString: "Data Warehouse"
+            },
+            {
+                q: "Dalam BI, indikator yang digunakan untuk mengukur keberhasilan suatu tujuan bisnis disebut...",
+                options: ["UML", "API", "KPI (Key Performance Indicator)", "URL"],
+                answerString: "KPI (Key Performance Indicator)"
+            },
+            {
+                q: "Apa keuntungan paling utama menggunakan sistem BI bagi manajemen perusahaan?",
+                options: ["Desain web lebih cantik", "Meningkatkan efisiensi dan profit berbasis data", "Bisa bermain game di kantor", "Karyawan bisa pulang lebih cepat"],
+                answerString: "Meningkatkan efisiensi dan profit berbasis data"
+            }
+        ];
+
+        // SVGs Content
+        const plantSVGs = {
+            peashooter: `
+                <path d="M50,90 Q40,60 50,50" stroke="#2ecc71" stroke-width="8" fill="none"/>
+                <path d="M50,80 Q20,70 25,90 Z" fill="#27ae60"/>
+                <path d="M50,85 Q80,75 75,95 Z" fill="#27ae60"/>
+                <circle cx="45" cy="40" r="25" fill="#2ecc71"/>
+                <path d="M50,25 L85,25 L85,55 L50,55 Z" fill="#2ecc71" rx="5"/>
+                <ellipse cx="85" cy="40" rx="8" ry="15" fill="#27ae60"/>
+                <circle cx="55" cy="30" r="6" fill="white"/>
+                <circle cx="57" cy="30" r="3" fill="black"/>
+            `,
+            sunflower: `
+                <path d="M50,90 Q40,60 50,50" stroke="#2ecc71" stroke-width="8" fill="none"/>
+                <path d="M50,80 Q20,70 25,90 Z" fill="#27ae60"/>
+                <path d="M50,85 Q80,75 75,95 Z" fill="#27ae60"/>
+                <!-- Petals -->
+                <circle cx="50" cy="20" r="10" fill="#f1c40f"/><circle cx="50" cy="60" r="10" fill="#f1c40f"/>
+                <circle cx="30" cy="40" r="10" fill="#f1c40f"/><circle cx="70" cy="40" r="10" fill="#f1c40f"/>
+                <circle cx="35" cy="25" r="10" fill="#f1c40f"/><circle cx="65" cy="55" r="10" fill="#f1c40f"/>
+                <circle cx="65" cy="25" r="10" fill="#f1c40f"/><circle cx="35" cy="55" r="10" fill="#f1c40f"/>
+                <!-- Face -->
+                <circle cx="50" cy="40" r="20" fill="#e67e22"/>
+                <circle cx="43" cy="35" r="3" fill="black"/><circle cx="57" cy="35" r="3" fill="black"/>
+                <path d="M43,45 Q50,50 57,45" stroke="black" stroke-width="2" fill="none"/>
+            `,
+            cactus: `
+                <rect x="35" y="20" width="30" height="70" rx="15" fill="#27ae60"/>
+                <path d="M35,40 Q20,40 20,25" stroke="#27ae60" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <path d="M65,55 Q80,55 80,40" stroke="#27ae60" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <circle cx="43" cy="35" r="3" fill="black"/><circle cx="57" cy="35" r="3" fill="black"/>
+                <circle cx="50" cy="45" r="4" fill="black"/>
+                <!-- Spikes -->
+                <line x1="35" y1="30" x2="30" y2="30" stroke="black" stroke-width="1"/><line x1="65" y1="40" x2="70" y2="40" stroke="black" stroke-width="1"/>
+                <line x1="45" y1="20" x2="45" y2="15" stroke="black" stroke-width="1"/><line x1="55" y1="20" x2="55" y2="15" stroke="black" stroke-width="1"/>
+            `
+        };
+
+        const baseZombieBody = `
+            <rect x="25" y="60" width="45" height="12" fill="#16a085" transform="rotate(-15 25 60)"/>
+            <rect x="40" y="90" width="12" height="35" fill="#34495e"/>
+            <path d="M35,50 L65,50 L60,95 L40,95 Z" fill="#7f8c8d"/>
+            <polygon points="48,50 52,50 50,75" fill="#c0392b"/>
+            <rect x="55" y="90" width="12" height="35" fill="#2c3e50"/>
+            <rect x="25" y="10" width="50" height="45" fill="#1abc9c" rx="8"/>
+            <rect x="30" y="45" width="40" height="15" fill="#16a085" rx="4"/>
+            <circle cx="40" cy="25" r="7" fill="white"/>
+            <circle cx="60" cy="25" r="7" fill="white"/>
+            <circle cx="40" cy="25" r="3" fill="#c0392b"/>
+            <circle cx="60" cy="25" r="3" fill="#c0392b"/>
+            <rect x="15" y="65" width="45" height="12" fill="#1abc9c" transform="rotate(-25 15 65)"/>
+        `;
+
+        const zombieHats = {
+            normal: ``,
+            conehead: `<polygon points="25,10 75,10 50,-25" fill="#e67e22"/><polygon points="20,10 80,10 75,5 25,5" fill="#d35400"/>`,
+            buckethead: `<path d="M25,10 L75,10 L65,-15 L35,-15 Z" fill="#95a5a6"/><rect x="20" y="5" width="60" height="5" fill="#7f8c8d"/>`
+        };
+
+        // Projectile Colors based on plant
+        const projectileStyle = {
+            peashooter: { color: '#2ecc71', shadow: '#27ae60', radius: '50%' },
+            sunflower: { color: '#f1c40f', shadow: '#f39c12', radius: '50%' },
+            cactus: { color: '#2c3e50', shadow: '#000000', radius: '0%' } // Sharp needle
+        };
+
+        // State Variables
+        let selectedPlant = 'peashooter';
+        let selectedZombie = 'normal';
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let zombiePosPercent = 80;
+        const plantPosPercent = 5;
+        const zombieAdvanceStep = 15;
+        const zombieKnockbackStep = 5;
+        let isAnimating = false;
+
+        // --- SETUP LOGIC ---
+        // Character Selection handlers
+        document.querySelectorAll('#plant-selection .char-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('#plant-selection .char-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedPlant = this.getAttribute('data-plant');
+            });
+        });
+
+        document.querySelectorAll('#zombie-selection .char-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('#zombie-selection .char-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedZombie = this.getAttribute('data-zombie');
+            });
+        });
+
+        function validateAndStart() {
+            const nimInput = document.getElementById('nim-input').value;
+            const errorMsg = document.getElementById('nim-error');
+            const regex = /^\d{8}$/;
+
+            if (!regex.test(nimInput)) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            errorMsg.style.display = 'none';
+
+            // Show Game Screen
+            document.getElementById('setup-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            
+            // Set NIM
+            document.getElementById('display-nim').innerText = `NIM: ${nimInput}`;
+
+            startGame();
+        }
+
+        function backToSetup() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('setup-screen').classList.add('active');
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        // --- GAME LOGIC ---
+        // Array Shuffle Helper (Fisher-Yates)
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
+
+        function prepareQuestions() {
+            // Deep copy base questions
+            let qList = JSON.parse(JSON.stringify(baseQuestionsData));
+            // Shuffle Order of questions
+            shuffleArray(qList);
+            
+            // Shuffle options inside each question
+            qList.forEach(q => {
+                shuffleArray(q.options);
+                // Find new index of the correct answer string
+                q.answerIndex = q.options.indexOf(q.answerString);
+            });
+            return qList;
+        }
+
+        function startGame() {
+            // Inject SVGs
+            document.getElementById('plant').innerHTML = plantSVGs[selectedPlant];
+            document.getElementById('zombie').innerHTML = zombieHats[selectedZombie] + baseZombieBody;
+
+            // Adjust projectile style
+            const peaEl = document.getElementById('pea');
+            peaEl.style.backgroundColor = projectileStyle[selectedPlant].color;
+            peaEl.style.boxShadow = `0 0 5px ${projectileStyle[selectedPlant].shadow}`;
+            peaEl.style.borderRadius = projectileStyle[selectedPlant].radius;
+            if(selectedPlant === 'cactus') {
+                peaEl.style.width = '25px'; peaEl.style.height = '5px';
+            } else {
+                peaEl.style.width = '20px'; peaEl.style.height = '20px';
+            }
+
+            questions = prepareQuestions();
+            currentQuestionIndex = 0;
+            zombiePosPercent = 80;
+            isAnimating = false;
+
+            // Reset UI
+            document.getElementById('modal-overlay').style.display = 'none';
+            const zombieEl = document.getElementById('zombie');
+            const plantEl = document.getElementById('plant');
+            
+            zombieEl.style.display = 'block';
+            plantEl.style.display = 'block';
+            zombieEl.style.left = zombiePosPercent + '%';
+            zombieEl.style.filter = 'none';
+            zombieEl.style.transform = 'none';
+            zombieEl.style.bottom = '90px';
+
+            document.getElementById('progress-bar').style.width = '0%';
+            
+            const statusMsg = document.getElementById('status-message');
+            statusMsg.innerText = "Persiapkan dirimu, Zombie datang!";
+            statusMsg.style.color = "#7f8c8d";
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                playerWins();
+                return;
+            }
+
+            const qData = questions[currentQuestionIndex];
+            document.getElementById('question-text').innerText = `Pertanyaan ${currentQuestionIndex + 1}: ${qData.q}`;
+            
+            const answersGrid = document.getElementById('answers-grid');
+            answersGrid.innerHTML = "";
+
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-answer';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(index, qData.answerIndex);
+                answersGrid.appendChild(btn);
+            });
+
+            // Update Progress Bar
+            const progressPercent = (currentQuestionIndex / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = progressPercent + '%';
+        }
+
+        function handleAnswer(selectedIndex, correctIndex) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const statusMsg = document.getElementById('status-message');
+            const btns = document.querySelectorAll('.btn-answer');
+            btns.forEach(b => b.style.pointerEvents = 'none');
+
+            if (selectedIndex === correctIndex) {
+                // Jawaban Benar
+                statusMsg.innerText = "Benar! Menembak Zombie...";
+                statusMsg.style.color = "#2ecc71";
+                
+                btns[selectedIndex].style.backgroundColor = "#27ae60";
+                btns[selectedIndex].style.borderColor = "#2ecc71";
+
+                shootPea(() => {
+                    const zombieEl = document.getElementById('zombie');
+                    zombiePosPercent += zombieKnockbackStep;
+                    if(zombiePosPercent > 85) zombiePosPercent = 85; 
+                    zombieEl.style.left = zombiePosPercent + '%';
+                    
+                    zombieEl.style.filter = 'drop-shadow(0 0 10px red) sepia(1) hue-rotate(-50deg) saturate(5)';
+                    setTimeout(() => {
+                        zombieEl.style.filter = 'none';
+                        currentQuestionIndex++;
+                        isAnimating = false;
+                        loadQuestion();
+                    }, 400);
+                });
+            } else {
+                // Jawaban Salah
+                statusMsg.innerText = "Salah! Zombie semakin mendekat!";
+                statusMsg.style.color = "#e74c3c";
+                
+                btns[selectedIndex].style.backgroundColor = "#e74c3c";
+                btns[selectedIndex].style.borderColor = "#c0392b";
+                btns[correctIndex].style.backgroundColor = "#27ae60"; // Tunjukkan yang benar
+
+                const zombieEl = document.getElementById('zombie');
+                zombiePosPercent -= zombieAdvanceStep;
+                zombieEl.style.left = zombiePosPercent + '%';
+
+                setTimeout(() => {
+                    if (zombiePosPercent <= plantPosPercent + 10) {
+                        gameOver();
+                    } else {
+                        currentQuestionIndex++;
+                        isAnimating = false;
+                        loadQuestion();
+                    }
+                }, 600);
+            }
+        }
+
+        function shootPea(callback) {
+            const plantEl = document.getElementById('plant');
+            const peaEl = document.getElementById('pea');
+
+            plantEl.style.transform = 'scale(0.9) rotate(-5deg)';
+            setTimeout(() => {
+                plantEl.style.transform = 'scale(1) rotate(0deg)';
+            }, 100);
+
+            peaEl.style.display = 'block';
+            peaEl.style.left = '15%'; 
+            
+            peaEl.offsetWidth; // trigger reflow
+
+            peaEl.style.transition = 'left 0.3s linear';
+            peaEl.style.left = (zombiePosPercent + 5) + '%'; 
+
+            setTimeout(() => {
+                peaEl.style.display = 'none';
+                peaEl.style.transition = 'none';
+                peaEl.style.left = '15%'; 
+                if(callback) callback();
+            }, 300);
+        }
+
+        function gameOver() {
+            isAnimating = true;
+            document.getElementById('plant').style.display = 'none'; 
+            
+            setTimeout(() => {
+                const modalTitle = document.getElementById('modal-title');
+                modalTitle.innerText = "GAME OVER";
+                modalTitle.style.color = "#e74c3c";
+                document.getElementById('modal-desc').innerText = "Otak dan Data Anda telah dimakan Zombie!";
+                document.getElementById('modal-overlay').style.display = 'flex';
+            }, 500);
+        }
+
+        function playerWins() {
+            isAnimating = true;
+            document.getElementById('progress-bar').style.width = '100%';
+            
+            const zombieEl = document.getElementById('zombie');
+            zombieEl.style.filter = 'grayscale(1) opacity(0.5)';
+            zombieEl.style.transform = 'rotate(90deg)'; 
+            zombieEl.style.bottom = '40px';
+
+            setTimeout(() => {
+                const modalTitle = document.getElementById('modal-title');
+                modalTitle.innerText = "ANDA MENANG!";
+                modalTitle.style.color = "#2ecc71";
+                document.getElementById('modal-desc').innerText = "Selamat! Anda adalah master Business Intelligence sejati.";
+                document.getElementById('modal-overlay').style.display = 'flex';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
