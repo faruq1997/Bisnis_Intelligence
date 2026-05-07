@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground Data Mining</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            color: white;
+            padding: 3rem 0;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .mission-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: none;
+            border-radius: 15px;
+        }
+        .mission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .game-section {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Gaya untuk Misi 1 (Cleansing) */
+        .data-item {
+            font-size: 3rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        .data-item:hover {
+            transform: scale(1.2);
+        }
+        .data-item.hidden {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 0.2s, opacity 0.2s linear;
+        }
+
+        /* Gaya untuk Misi 3 (Clustering) */
+        .customer-card {
+            cursor: pointer;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .customer-card.selected {
+            border-color: #0d6efd;
+            background-color: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        /* Gaya Chart Sederhana untuk Regresi */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 15px;
+            height: 250px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .bar {
+            width: 70px;
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            transition: height 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+        .bar.unknown {
+            background-color: #e9ecef;
+            color: #6c757d;
+            border: 2px dashed #adb5bd;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Penjelasan Singkat -->
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">🎮 Playground Data Mining</h1>
+            <p class="lead mt-3">Mari belajar teknik "menambang" data dengan cara memainkannya!</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        
+        <!-- Menu Utama / Pilihan Misi -->
+        <div id="main-menu" class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+            <div class="col">
+                <div class="card mission-card h-100 text-center p-4" onclick="startMission(1)">
+                    <div class="card-body">
+                        <h1 class="mb-3">🧹</h1>
+                        <h4 class="card-title">Misi 1: Cleansing</h4>
+                        <p class="card-text text-muted">Bersihkan data kotor sebelum dianalisis.</p>
+                        <button class="btn btn-outline-primary mt-2">Mulai Misi 1</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mission-card h-100 text-center p-4" onclick="startMission(2)">
+                    <div class="card-body">
+                        <h1 class="mb-3">🛒</h1>
+                        <h4 class="card-title">Misi 2: Asosiasi</h4>
+                        <p class="card-text text-muted">Cari hubungan barang yang sering dibeli bersamaan.</p>
+                        <button class="btn btn-outline-success mt-2">Mulai Misi 2</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mission-card h-100 text-center p-4" onclick="startMission(3)">
+                    <div class="card-body">
+                        <h1 class="mb-3">👥</h1>
+                        <h4 class="card-title">Misi 3: Clustering</h4>
+                        <p class="card-text text-muted">Kelompokkan pelanggan yang punya sifat mirip.</p>
+                        <button class="btn btn-outline-warning mt-2">Mulai Misi 3</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mission-card h-100 text-center p-4" onclick="startMission(4)">
+                    <div class="card-body">
+                        <h1 class="mb-3">🏷️</h1>
+                        <h4 class="card-title">Misi 4: Klasifikasi</h4>
+                        <p class="card-text text-muted">Tentukan kategori (kelas) dari sebuah data baru.</p>
+                        <button class="btn btn-outline-danger mt-2">Mulai Misi 4</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mission-card h-100 text-center p-4" onclick="startMission(5)">
+                    <div class="card-body">
+                        <h1 class="mb-3">📈</h1>
+                        <h4 class="card-title">Misi 5: Regresi (Peramalan)</h4>
+                        <p class="card-text text-muted">Prediksi angka di masa depan berdasarkan tren saat ini.</p>
+                        <button class="btn btn-outline-info mt-2">Mulai Misi 5</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AREA MISI 1: Data Cleansing -->
+        <div id="mission-1" class="game-section mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>🧹 Misi 1: Data Cleansing</h2>
+                <button class="btn btn-secondary btn-sm" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+            <div class="alert alert-info">
+                <strong>Instruksi:</strong> Di bawah ini ada banyak data pelanggan. <strong>Klik semua gambar Bug 🐛</strong> untuk membuangnya agar data kita bersih sebelum diolah.
+            </div>
+            
+            <div class="bg-light p-4 rounded text-center border">
+                <div id="data-arena" class="d-flex flex-wrap justify-content-center gap-3">
+                    <!-- Data dan Bug dibuat via JS -->
+                </div>
+            </div>
+
+            <div id="success-1" class="alert alert-success mt-4 d-none">
+                <h4 class="alert-heading">Hebat! 🎉</h4>
+                <p>Anda baru saja melakukan <strong>Data Cleansing (Pembersihan Data)</strong>. Ini tahap awal untuk membuang data yang kosong/salah agar tidak mengacaukan analisis.</p>
+                <button class="btn btn-success" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+        </div>
+
+        <!-- AREA MISI 2: Asosiasi -->
+        <div id="mission-2" class="game-section mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>🛒 Misi 2: Asosiasi</h2>
+                <button class="btn btn-secondary btn-sm" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+            <div class="alert alert-info">
+                <strong>Instruksi:</strong> Lihat 3 keranjang belanja. Coba tebak pola barang apa yang sering dibeli secara bersamaan!
+            </div>
+            
+            <div class="row text-center mb-4">
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-light">
+                        <h5>Keranjang 1</h5>
+                        <h3>☕ 🍞 🍬</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-light">
+                        <h5>Keranjang 2</h5>
+                        <h3>☕ 🥛 🍬</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-light">
+                        <h5>Keranjang 3</h5>
+                        <h3>🍵 🍞 🍯</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-primary mb-3">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Setiap orang yang membeli ☕ (Kopi) pasti juga membeli... ?</h5>
+                    <div class="mt-3">
+                        <button class="btn btn-outline-danger mx-2" onclick="checkAssociation('Roti')">🍞 Roti</button>
+                        <button class="btn btn-outline-success mx-2" onclick="checkAssociation('Gula')">🍬 Gula</button>
+                        <button class="btn btn-outline-info mx-2" onclick="checkAssociation('Susu')">🥛 Susu</button>
+                    </div>
+                    <div id="error-2" class="text-danger mt-3 fw-bold d-none">Coba perhatikan Keranjang 1 dan 2 lagi!</div>
+                </div>
+            </div>
+
+            <div id="success-2" class="alert alert-success mt-4 d-none">
+                <h4 class="alert-heading">Tepat Sekali! 🎉</h4>
+                <p>Anda menemukan <strong>Association Rule</strong>. Dalam retail, kasir bisa menaruh rak Kopi bersebelahan dengan Gula untuk meningkatkan penjualan.</p>
+                <button class="btn btn-success" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+        </div>
+
+        <!-- AREA MISI 3: Clustering -->
+        <div id="mission-3" class="game-section mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>👥 Misi 3: Clustering</h2>
+                <button class="btn btn-secondary btn-sm" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+            <div class="alert alert-info">
+                <strong>Instruksi:</strong> Cari <strong>2 pelanggan</strong> yang mirip untuk dimasukkan ke grup "Target Promo HP Gaming" (Cari yang umurnya muda & suka diskon). Klik 2 orang yang tepat!
+            </div>
+            
+            <div class="row g-3" id="cluster-arena">
+                <div class="col-md-3">
+                    <div class="customer-card p-3 text-center h-100" onclick="toggleCustomer(this, 'salah')">
+                        <h1 class="mb-2">👨‍💼</h1><h5>Bapak Budi</h5>
+                        <ul class="list-unstyled text-muted small"><li>Umur: 45 Thn</li><li>Tipe: Suka Mewah</li></ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="customer-card p-3 text-center h-100" onclick="toggleCustomer(this, 'benar')">
+                        <h1 class="mb-2">👦</h1><h5>Andi</h5>
+                        <ul class="list-unstyled text-muted small"><li>Umur: 19 Thn</li><li>Tipe: Suka Diskon</li></ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="customer-card p-3 text-center h-100" onclick="toggleCustomer(this, 'salah')">
+                        <h1 class="mb-2">👩‍💼</h1><h5>Ibu Dina</h5>
+                        <ul class="list-unstyled text-muted small"><li>Umur: 40 Thn</li><li>Tipe: Suka Mewah</li></ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="customer-card p-3 text-center h-100" onclick="toggleCustomer(this, 'benar')">
+                        <h1 class="mb-2">👨‍🎓</h1><h5>Riko</h5>
+                        <ul class="list-unstyled text-muted small"><li>Umur: 21 Thn</li><li>Tipe: Suka Diskon</li></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-primary" onclick="checkClustering()">Cek Kelompok!</button>
+                <div id="error-3" class="text-danger mt-2 fw-bold d-none">Pilih tepat 2 orang berjiwa muda & suka hemat!</div>
+            </div>
+
+            <div id="success-3" class="alert alert-success mt-4 d-none">
+                <h4 class="alert-heading">Brilian! 🎉</h4>
+                <p>Anda baru saja melakukan <strong>Clustering (Segmentasi)</strong>. Algoritma otomatis mengelompokkan data berdasarkan kemiripannya agar promosi lebih tertarget.</p>
+                <button class="btn btn-success" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+        </div>
+
+        <!-- AREA MISI 4: Klasifikasi -->
+        <div id="mission-4" class="game-section mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>🏷️ Misi 4: Klasifikasi</h2>
+                <button class="btn btn-secondary btn-sm" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+            <div class="alert alert-info">
+                <strong>Instruksi:</strong> Tugas klasifikasi adalah menentukan "Label" atau "Kelas" dari data yang baru masuk berdasarkan pola yang sudah dipelajari. Baca Email berikut dan tentukan labelnya!
+            </div>
+            
+            <div class="card mx-auto shadow-sm" style="max-width: 500px;">
+                <div class="card-header bg-dark text-white d-flex align-items-center">
+                    <span class="me-2">✉️</span> <strong>Pesan Masuk Baru</strong>
+                </div>
+                <div class="card-body bg-light">
+                    <p class="mb-1 text-muted small">Dari: unknown-sender@hadiah-gratis-123.com</p>
+                    <h5 class="card-title">SELAMAT! Anda menang 100 JUTA!</h5>
+                    <p class="card-text">Nomor WhatsApp Anda terpilih mendapatkan dana bantuan. Segera klik link <em>http://bit.ly/ambil-uang-anda-sekarang</em> sebelum hangus!!</p>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <p class="fw-bold mb-2">Menurut algoritma Anda, email ini masuk kategori apa?</p>
+                    <button class="btn btn-outline-danger" onclick="checkClassification('spam')">🚨 SPAM (Penipuan)</button>
+                    <button class="btn btn-outline-success" onclick="checkClassification('penting')">📨 PENTING (Aman)</button>
+                </div>
+            </div>
+
+            <div id="error-4" class="text-danger text-center mt-3 fw-bold d-none">Masa email seperti itu dibilang penting? Coba lagi!</div>
+
+            <div id="success-4" class="alert alert-success mt-4 d-none">
+                <h4 class="alert-heading">Sempurna! 🎉</h4>
+                <p>Anda telah melakukan <strong>Klasifikasi</strong>. Sistem email seperti Gmail menggunakan data mining untuk mengklasifikasikan email yang mengandung kata-kata seperti "Selamat", "Hadiah", atau "Klik Link" ke dalam <em>Folder Spam</em> secara otomatis.</p>
+                <button class="btn btn-success" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+        </div>
+
+        <!-- AREA MISI 5: Regresi / Peramalan -->
+        <div id="mission-5" class="game-section mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>📈 Misi 5: Regresi (Peramalan/Forecasting)</h2>
+                <button class="btn btn-secondary btn-sm" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+            <div class="alert alert-info">
+                <strong>Instruksi:</strong> Regresi mencari pola pertumbuhan data numerik (angka) untuk memprediksi masa depan. Perhatikan grafik penjualan HP di bawah, lalu tebak berapa penjualan di Bulan 4!
+            </div>
+            
+            <div class="bar-chart mt-4">
+                <div class="bar" style="height: 50px;">Bln 1<br>50</div>
+                <div class="bar" style="height: 100px;">Bln 2<br>100</div>
+                <div class="bar" style="height: 150px;">Bln 3<br>150</div>
+                <div class="bar unknown" id="bar-bln4" style="height: 200px;">Bln 4<br>?</div>
+            </div>
+
+            <div class="text-center mt-4">
+                <h5 class="mb-3">Prediksi penjualan di Bulan ke-4 adalah:</h5>
+                <button class="btn btn-outline-primary mx-2" onclick="checkRegression(160)">160 Unit</button>
+                <button class="btn btn-outline-primary mx-2" onclick="checkRegression(200)">200 Unit</button>
+                <button class="btn btn-outline-primary mx-2" onclick="checkRegression(300)">300 Unit</button>
+                
+                <div id="error-5" class="text-danger mt-3 fw-bold d-none">Pola naiknya tidak seperti itu, coba lihat selisih per bulannya (+50).</div>
+            </div>
+
+            <div id="success-5" class="alert alert-success mt-4 d-none">
+                <h4 class="alert-heading">Prediksi Akurat! 🎉</h4>
+                <p>Anda mempraktikkan <strong>Regresi (Peramalan)</strong>. Anda menyadari ada tren kenaikan tetap (+50) setiap bulannya. Perusahaan menggunakan teknik ini untuk memprediksi stok barang agar tidak kehabisan di masa mendatang.</p>
+                <button class="btn btn-success" onclick="backToMenu()">Selesai & Kembali ke Menu</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Logika Game -->
+    <script>
+        // --- Navigasi ---
+        function hideAll() {
+            document.getElementById('main-menu').style.display = 'none';
+            for(let i=1; i<=5; i++){
+                let el = document.getElementById('mission-' + i);
+                if(el) el.style.display = 'none';
+            }
+        }
+
+        function backToMenu() {
+            hideAll();
+            document.getElementById('main-menu').style.display = 'flex';
+        }
+
+        function startMission(id) {
+            hideAll();
+            document.getElementById('mission-' + id).style.display = 'block';
+            
+            // Reset state
+            if(id === 1) resetMission1();
+            if(id === 2) resetMission2();
+            if(id === 3) resetMission3();
+            if(id === 4) resetMission4();
+            if(id === 5) resetMission5();
+        }
+
+        // --- Logika Misi 1: Cleansing ---
+        let bugsRemaining = 4;
+        function resetMission1() {
+            bugsRemaining = 4;
+            document.getElementById('success-1').classList.add('d-none');
+            const arena = document.getElementById('data-arena');
+            arena.innerHTML = '';
+            
+            let items = ['📄', '📄', '🐛', '📄', '📄', '🐛', '📄', '🐛', '📄', '📄', '🐛', '📄'];
+            items.sort(() => Math.random() - 0.5);
+
+            items.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'data-item';
+                span.innerText = item;
+                
+                if(item === '🐛') {
+                    span.onclick = function() {
+                        this.classList.add('hidden');
+                        bugsRemaining--;
+                        if(bugsRemaining === 0) {
+                            document.getElementById('success-1').classList.remove('d-none');
+                        }
+                    }
+                } else {
+                    span.onclick = function() {
+                        this.style.transform = "translateX(5px)";
+                        setTimeout(() => this.style.transform = "translateX(-5px)", 100);
+                        setTimeout(() => this.style.transform = "translateX(0)", 200);
+                    }
+                }
+                arena.appendChild(span);
+            });
+        }
+
+        // --- Logika Misi 2: Asosiasi ---
+        function resetMission2() {
+            document.getElementById('success-2').classList.add('d-none');
+            document.getElementById('error-2').classList.add('d-none');
+        }
+
+        function checkAssociation(answer) {
+            const errorMsg = document.getElementById('error-2');
+            const successMsg = document.getElementById('success-2');
+            
+            if(answer === 'Gula') {
+                errorMsg.classList.add('d-none');
+                successMsg.classList.remove('d-none');
+            } else {
+                successMsg.classList.add('d-none');
+                errorMsg.classList.remove('d-none');
+            }
+        }
+
+        // --- Logika Misi 3: Clustering ---
+        let selectedCustomers = [];
+        function resetMission3() {
+            selectedCustomers = [];
+            document.getElementById('success-3').classList.add('d-none');
+            document.getElementById('error-3').classList.add('d-none');
+            document.querySelectorAll('.customer-card').forEach(card => card.classList.remove('selected'));
+        }
+
+        function toggleCustomer(element, type) {
+            if(element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selectedCustomers = selectedCustomers.filter(item => item !== type);
+            } else {
+                element.classList.add('selected');
+                selectedCustomers.push(type);
+            }
+        }
+
+        function checkClustering() {
+            const errorMsg = document.getElementById('error-3');
+            const successMsg = document.getElementById('success-3');
+            const rightAnswers = selectedCustomers.filter(item => item === 'benar');
+            const wrongAnswers = selectedCustomers.filter(item => item === 'salah');
+
+            if(selectedCustomers.length === 2 && rightAnswers.length === 2 && wrongAnswers.length === 0) {
+                errorMsg.classList.add('d-none');
+                successMsg.classList.remove('d-none');
+            } else {
+                successMsg.classList.add('d-none');
+                errorMsg.classList.remove('d-none');
+            }
+        }
+
+        // --- Logika Misi 4: Klasifikasi ---
+        function resetMission4() {
+            document.getElementById('success-4').classList.add('d-none');
+            document.getElementById('error-4').classList.add('d-none');
+        }
+
+        function checkClassification(answer) {
+            const errorMsg = document.getElementById('error-4');
+            const successMsg = document.getElementById('success-4');
+            
+            if(answer === 'spam') {
+                errorMsg.classList.add('d-none');
+                successMsg.classList.remove('d-none');
+            } else {
+                successMsg.classList.add('d-none');
+                errorMsg.classList.remove('d-none');
+            }
+        }
+
+        // --- Logika Misi 5: Regresi / Peramalan ---
+        function resetMission5() {
+            document.getElementById('success-5').classList.add('d-none');
+            document.getElementById('error-5').classList.add('d-none');
+            let bar4 = document.getElementById('bar-bln4');
+            bar4.className = 'bar unknown';
+            bar4.innerHTML = 'Bln 4<br>?';
+        }
+
+        function checkRegression(answer) {
+            const errorMsg = document.getElementById('error-5');
+            const successMsg = document.getElementById('success-5');
+            let bar4 = document.getElementById('bar-bln4');
+            
+            if(answer === 200) {
+                errorMsg.classList.add('d-none');
+                successMsg.classList.remove('d-none');
+                bar4.className = 'bar bg-success';
+                bar4.innerHTML = 'Bln 4<br>200';
+            } else {
+                successMsg.classList.add('d-none');
+                errorMsg.classList.remove('d-none');
+                bar4.className = 'bar unknown';
+                bar4.innerHTML = 'Bln 4<br>?';
+            }
+        }
+
+        // Inisialisasi awal
+        backToMenu();
+    </script>
+</body>
+</html>
