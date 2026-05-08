@@ -1,0 +1,390 @@
+import React, { useState, useEffect } from 'react';
+import { Target, Search, Wrench, Cpu, BarChart, Rocket, CheckCircle, AlertTriangle, ArrowRight, Activity, Play } from 'lucide-react';
+
+// --- MOCK DATA ---
+const rawData = [
+  { id: 'C001', tenure: 2, charge: 50.5, status: 'Aktif', churn: 'Ya' },
+  { id: 'C002', tenure: 24, charge: null, status: 'Aktif', churn: 'Tidak' },
+  { id: 'C003', tenure: 1, charge: 89.0, status: 'Nonaktif', churn: 'Ya' },
+  { id: 'C004', tenure: -5, charge: 20.0, status: 'Aktif', churn: 'Tidak' }, // Error data
+  { id: 'C005', tenure: 12, charge: 65.0, status: 'Aktif', churn: 'Tidak' },
+];
+
+const cleanData = [
+  { id: 'C001', tenure: 2, charge: 50.5, status: 1, churn: 1 },
+  { id: 'C002', tenure: 24, charge: 56.1, status: 1, churn: 0 }, // Imputed
+  { id: 'C003', tenure: 1, charge: 89.0, status: 0, churn: 1 },
+  { id: 'C004', tenure: 5, charge: 20.0, status: 1, churn: 0 }, // Fixed abs
+  { id: 'C005', tenure: 12, charge: 65.0, status: 1, churn: 0 },
+];
+
+const steps = [
+  { id: 1, name: 'Business Understanding', icon: Target },
+  { id: 2, name: 'Data Understanding', icon: Search },
+  { id: 3, name: 'Data Preparation', icon: Wrench },
+  { id: 4, name: 'Modeling', icon: Cpu },
+  { id: 5, name: 'Evaluation', icon: BarChart },
+  { id: 6, name: 'Deployment', icon: Rocket },
+];
+
+export default function App() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [dataCleaned, setDataCleaned] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(null);
+  
+  // Deployment Form State
+  const [deployTenure, setDeployTenure] = useState(12);
+  const [deployCharge, setDeployCharge] = useState(50);
+  const [prediction, setPrediction] = useState(null);
+
+  const handleNext = () => {
+    if (currentStep < 6) setCurrentStep(c => c + 1);
+  };
+
+  const handleSimulateProcessing = (callback, delay = 1500) => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      callback();
+    }, delay);
+  };
+
+  const handlePredict = () => {
+    handleSimulateProcessing(() => {
+      // Simple mock logic for Decision Tree
+      if (deployTenure < 6 && deployCharge > 60) {
+        setPrediction('Tinggi (Akan Churn)');
+      } else {
+        setPrediction('Rendah (Bertahan)');
+      }
+    }, 800);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header */}
+        <div className="mb-8 text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold text-indigo-700 flex items-center justify-center md:justify-start gap-3">
+            <Activity className="w-10 h-10" />
+            CRISP-DM Playground
+          </h1>
+          <p className="text-slate-500 mt-2 text-lg">Simulasi Proyek Data Mining: Memprediksi Customer Churn (Pelanggan Berhenti)</p>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-8">
+          
+          {/* Sidebar / Stepper */}
+          <div className="w-full md:w-1/4 bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+            <h3 className="font-semibold text-slate-700 mb-4 uppercase tracking-wider text-sm">Fase CRISP-DM</h3>
+            <div className="space-y-2">
+              {steps.map((step, index) => {
+                const Icon = step.icon;
+                const isActive = currentStep === step.id;
+                const isPast = currentStep > step.id;
+                
+                return (
+                  <div 
+                    key={step.id} 
+                    className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                      isActive ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 
+                      isPast ? 'text-emerald-600' : 'text-slate-400'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-full ${isActive ? 'bg-indigo-100' : isPast ? 'bg-emerald-100' : 'bg-slate-100'}`}>
+                      {isPast ? <CheckCircle className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
+                    </div>
+                    <span className={`font-medium ${isActive ? 'font-bold' : ''}`}>
+                      {step.id}. {step.name}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="w-full md:w-3/4 bg-white rounded-xl shadow-sm border border-slate-200 p-6 min-h-[500px] flex flex-col">
+            
+            {/* Step 1: Business Understanding */}
+            {currentStep === 1 && (
+              <div className="animate-fade-in flex-grow">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-4"><Target className="text-indigo-600" /> 1. Business Understanding</h2>
+                <div className="bg-indigo-50 p-6 rounded-lg border border-indigo-100 mb-6 text-lg text-slate-700 space-y-4">
+                  <p><strong>Skenario Bisnis:</strong> Perusahaan Telekomunikasi "TelcoFast" menyadari banyak pelanggannya yang beralih ke kompetitor bulan lalu (Churn).</p>
+                  <p><strong>Tujuan Bisnis:</strong> Mencegah pelanggan pindah dengan memberikan promo khusus sebelum mereka memutuskan untuk berhenti.</p>
+                  <p><strong>Tujuan Data Mining:</strong> Membangun model yang dapat memprediksi pelanggan mana yang kemungkinan besar akan <em>churn</em> di bulan berikutnya berdasarkan data historis mereka.</p>
+                </div>
+                <button onClick={handleNext} className="mt-auto flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                  Mulai Pengumpulan Data <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {/* Step 2: Data Understanding */}
+            {currentStep === 2 && (
+              <div className="animate-fade-in flex-grow">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-4"><Search className="text-indigo-600" /> 2. Data Understanding</h2>
+                <p className="mb-4 text-slate-600 text-lg">Kita telah mengambil sampel data pelanggan. Mari kita lihat datanya. Apakah Anda melihat keanehan?</p>
+                
+                <div className="overflow-x-auto border border-slate-200 rounded-lg mb-6">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-50 border-b border-slate-200">
+                      <tr>
+                        <th className="p-3 font-semibold">ID Pelanggan</th>
+                        <th className="p-3 font-semibold">Lama Berlangganan (Bulan)</th>
+                        <th className="p-3 font-semibold">Tagihan Bulanan ($)</th>
+                        <th className="p-3 font-semibold">Status Sistem</th>
+                        <th className="p-3 font-semibold text-red-600">Churn (Target)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rawData.map((row, i) => (
+                        <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
+                          <td className="p-3">{row.id}</td>
+                          <td className="p-3">
+                            {row.tenure < 0 ? <span className="bg-red-100 text-red-700 px-2 py-1 rounded font-bold">{row.tenure} (Aneh)</span> : row.tenure}
+                          </td>
+                          <td className="p-3">
+                            {row.charge === null ? <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded font-bold">KOSONG</span> : row.charge}
+                          </td>
+                          <td className="p-3">{row.status}</td>
+                          <td className="p-3 font-medium">{row.churn}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div className="bg-amber-50 text-amber-800 p-4 rounded-lg flex items-start gap-3 mb-6">
+                  <AlertTriangle className="w-6 h-6 flex-shrink-0" />
+                  <p><strong>Temuan:</strong> Terdapat nilai tagihan yang kosong (Null/Missing Value), nilai bulan negatif (Error input), dan format data teks ('Aktif'/'Ya') yang tidak bisa dibaca algoritma matematika.</p>
+                </div>
+
+                <button onClick={handleNext} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                  Lanjut ke Persiapan Data <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {/* Step 3: Data Preparation */}
+            {currentStep === 3 && (
+              <div className="animate-fade-in flex-grow">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-4"><Wrench className="text-indigo-600" /> 3. Data Preparation</h2>
+                <p className="mb-4 text-slate-600 text-lg">Tahap ini memakan waktu paling lama di dunia nyata. Kita harus memperbaiki kesalahan yang ditemukan pada tahap sebelumnya.</p>
+                
+                {!dataCleaned ? (
+                  <div className="text-center py-12 bg-slate-50 rounded-xl border-2 border-dashed border-slate-300">
+                    <Wrench className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold mb-2">Data Masih Kotor</h3>
+                    <p className="text-slate-500 mb-6">Klik tombol di bawah untuk menjalankan proses <em>Data Cleaning</em> & <em>Transformation</em>.</p>
+                    <button 
+                      onClick={() => handleSimulateProcessing(() => setDataCleaned(true), 2000)}
+                      disabled={isProcessing}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-2 mx-auto"
+                    >
+                      {isProcessing ? <><Activity className="animate-spin" /> Membersihkan Data...</> : <><Play className="w-5 h-5 fill-current"/> Jalankan Pipeline Pembersihan</>}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="animate-fade-in">
+                    <div className="bg-emerald-50 text-emerald-800 p-4 rounded-lg mb-4 flex items-center gap-3">
+                      <CheckCircle className="w-6 h-6 text-emerald-600" />
+                      <div>
+                        <strong>Data Berhasil Disiapkan!</strong>
+                        <ul className="list-disc ml-5 text-sm mt-1">
+                          <li>Nilai negatif diubah menjadi absolut.</li>
+                          <li>Nilai kosong diisi dengan rata-rata (Imputasi).</li>
+                          <li>Teks 'Ya/Tidak' dan 'Aktif/Nonaktif' diubah menjadi angka biner 1 dan 0 (Encoding).</li>
+                        </ul>
+                      </div>
+                    </div>
+                    
+                    <div className="overflow-x-auto border border-slate-200 rounded-lg mb-6">
+                      <table className="w-full text-left text-sm">
+                        <thead className="bg-slate-50 border-b border-slate-200">
+                          <tr>
+                            <th className="p-3 font-semibold">ID</th>
+                            <th className="p-3 font-semibold">Lama (Bln)</th>
+                            <th className="p-3 font-semibold">Tagihan ($)</th>
+                            <th className="p-3 font-semibold">Status (Encoded)</th>
+                            <th className="p-3 font-semibold text-emerald-600">Churn (Target)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cleanData.map((row, i) => (
+                            <tr key={i} className="border-b border-slate-100">
+                              <td className="p-3">{row.id}</td>
+                              <td className="p-3">{row.tenure}</td>
+                              <td className="p-3 text-emerald-600 font-medium">{row.charge}</td>
+                              <td className="p-3">{row.status}</td>
+                              <td className="p-3">{row.churn}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <button onClick={handleNext} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                      Pilih Model Algoritma <ArrowRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step 4: Modeling */}
+            {currentStep === 4 && (
+              <div className="animate-fade-in flex-grow">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-4"><Cpu className="text-indigo-600" /> 4. Modeling</h2>
+                <p className="mb-6 text-slate-600 text-lg">Data kita sudah memiliki target (kolom Churn: 1 atau 0). Algoritma mana yang harus kita pilih?</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div 
+                    onClick={() => setSelectedModel('kmeans')}
+                    className={`border-2 p-6 rounded-xl cursor-pointer transition-all ${selectedModel === 'kmeans' ? 'border-red-500 bg-red-50' : 'border-slate-200 hover:border-indigo-300'}`}
+                  >
+                    <h3 className="text-xl font-bold mb-2">K-Means Clustering</h3>
+                    <p className="text-sm text-slate-600">Teknik untuk mengelompokkan data tanpa label (Unsupervised). Mengelompokkan pelanggan berdasarkan kemiripan profil.</p>
+                    {selectedModel === 'kmeans' && (
+                      <p className="mt-4 text-red-600 font-medium text-sm flex gap-2 items-start"><AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" /> Salah! Kita sudah punya data label/target (Churn: Ya/Tidak), jadi metode Unsupervised kurang tepat untuk prediksi spesifik ini.</p>
+                    )}
+                  </div>
+
+                  <div 
+                    onClick={() => setSelectedModel('decisionTree')}
+                    className={`border-2 p-6 rounded-xl cursor-pointer transition-all ${selectedModel === 'decisionTree' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-indigo-300'}`}
+                  >
+                    <h3 className="text-xl font-bold mb-2">Decision Tree (Klasifikasi)</h3>
+                    <p className="text-sm text-slate-600">Teknik supervised learning untuk memprediksi kategori/label spesifik berdasarkan aturan keputusan (seperti pohon cabang).</p>
+                    {selectedModel === 'decisionTree' && (
+                      <p className="mt-4 text-emerald-600 font-medium text-sm flex gap-2 items-start"><CheckCircle className="w-4 h-4 shrink-0 mt-0.5" /> Tepat! Karena kita ingin memprediksi label khusus (Churn: 1 atau 0), ini adalah masalah Klasifikasi.</p>
+                    )}
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleNext} 
+                  disabled={selectedModel !== 'decisionTree'}
+                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Latih & Evaluasi Model <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {/* Step 5: Evaluation */}
+            {currentStep === 5 && (
+              <div className="animate-fade-in flex-grow">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-4"><BarChart className="text-indigo-600" /> 5. Evaluation</h2>
+                <p className="mb-6 text-slate-600 text-lg">Model Decision Tree selesai dilatih! Apakah model ini bekerja dengan baik sebelum kita terapkan di dunia nyata?</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center">
+                    <h3 className="text-slate-500 font-medium mb-2">Akurasi Model</h3>
+                    <div className="text-5xl font-extrabold text-indigo-600 mb-2">87.5%</div>
+                    <p className="text-sm text-slate-600">Model dapat menebak dengan benar 87 dari 100 pelanggan.</p>
+                    
+                    <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4">
+                      <div className="bg-indigo-600 h-2.5 rounded-full w-[87.5%]"></div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 className="text-slate-500 font-medium mb-4 text-center">Aturan Keputusan (Insight)</h3>
+                    <ul className="space-y-3 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" />
+                        <span>Pelanggan dengan <strong>Tagihan Tinggi</strong> & <strong>Lama Langganan Singkat</strong> berisiko Churn paling besar.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" />
+                        <span>Pelanggan yang bertahan {'>'} 24 bulan jarang berpindah.</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-emerald-50 text-emerald-800 p-4 rounded-lg flex items-start gap-3 mb-6">
+                  <CheckCircle className="w-6 h-6 flex-shrink-0" />
+                  <p>Model dianggap sukses dan memenuhi Business Understanding awal. Siap untuk diterjunkan!</p>
+                </div>
+
+                <button onClick={handleNext} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                  Menuju Deployment <Rocket className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {/* Step 6: Deployment */}
+            {currentStep === 6 && (
+              <div className="animate-fade-in flex-grow flex flex-col">
+                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-4"><Rocket className="text-indigo-600" /> 6. Deployment</h2>
+                <p className="mb-6 text-slate-600 text-lg">Model kini diintegrasikan ke sistem perusahaan. Mari coba prediksi untuk 1 pelanggan baru hari ini!</p>
+                
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
+                  <h3 className="font-bold text-slate-700 mb-4 border-b pb-2">Simulator Aplikasi Prediksi Churn</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Lama Berlangganan: {deployTenure} bulan</label>
+                      <input 
+                        type="range" min="1" max="60" 
+                        value={deployTenure} onChange={(e) => setDeployTenure(e.target.value)}
+                        className="w-full accent-indigo-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">Tagihan Bulanan: ${deployCharge}</label>
+                      <input 
+                        type="range" min="10" max="150" 
+                        value={deployCharge} onChange={(e) => setDeployCharge(e.target.value)}
+                        className="w-full accent-indigo-600"
+                      />
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={handlePredict}
+                    disabled={isProcessing}
+                    className="w-full bg-slate-800 hover:bg-slate-900 text-white py-3 rounded-lg font-bold transition-colors flex justify-center items-center gap-2"
+                  >
+                    {isProcessing ? <Activity className="animate-spin w-5 h-5" /> : <Cpu className="w-5 h-5" />}
+                    {isProcessing ? 'Sistem Sedang Memprediksi...' : 'Jalankan Prediksi AI'}
+                  </button>
+
+                  {prediction && !isProcessing && (
+                    <div className={`mt-6 p-4 rounded-lg border-2 text-center ${prediction.includes('Tinggi') ? 'bg-red-50 border-red-200 text-red-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800'}`}>
+                      <h4 className="text-sm font-bold uppercase tracking-wider mb-1">Hasil Prediksi Risiko Churn</h4>
+                      <p className="text-2xl font-black">{prediction}</p>
+                      {prediction.includes('Tinggi') ? (
+                        <p className="text-sm mt-2 font-medium">Saran Sistem: Kirimkan voucher diskon 20% segera!</p>
+                      ) : (
+                        <p className="text-sm mt-2 font-medium">Saran Sistem: Pelanggan aman, tidak perlu tindakan khusus.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-auto text-center">
+                  <button 
+                    onClick={() => {
+                      setCurrentStep(1);
+                      setDataCleaned(false);
+                      setSelectedModel(null);
+                      setPrediction(null);
+                    }}
+                    className="text-indigo-600 font-medium hover:underline flex justify-center items-center gap-2 w-full"
+                  >
+                    Mulai Proyek Baru (Reset)
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
