@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="id" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Game Kuis: Master Business Intelligence</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+      body {
+        background-color: #0f172a;
+        color: #f8fafc;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .app-container {
+        max-width: 800px;
+        margin: auto;
+        width: 100%;
+        padding: 1rem;
+      }
+      .card-custom {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+      .option-btn {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 0.75rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 2px solid #334155;
+        background-color: #1e293b;
+        color: #f8fafc;
+        transition: all 0.2s ease;
+        white-space: normal;
+        word-wrap: break-word;
+      }
+      .option-btn:hover:not(:disabled) {
+        background-color: #334155;
+        border-color: #475569;
+        transform: translateY(-2px);
+      }
+      .option-btn:disabled {
+        opacity: 0.8;
+      }
+      .option-btn.correct {
+        background-color: #059669 !important;
+        border-color: #10b981 !important;
+        color: white;
+      }
+      .option-btn.wrong {
+        background-color: #e11d48 !important;
+        border-color: #f43f5e !important;
+        color: white;
+      }
+      .lives-icon {
+        width: 24px;
+        height: 24px;
+        fill: #f43f5e;
+        transition: all 0.3s ease;
+      }
+      .lives-icon.lost {
+        fill: #475569;
+        opacity: 0.5;
+      }
+      .progress {
+        height: 10px;
+        border-radius: 5px;
+        background-color: #334155;
+      }
+      .progress-bar {
+        background-color: #3b82f6;
+        transition: width 0.4s ease;
+      }
+      .shake {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+      }
+      @keyframes shake {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+      }
+      .fade-in {
+        animation: fadeIn 0.4s ease-in;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .header-icon {
+        width: 80px;
+        height: 80px;
+        fill: #3b82f6;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="app-container">
+      
+      <!-- START SCREEN -->
+      <div id="start-screen" class="card-custom text-center p-5 fade-in">
+        <svg class="header-icon mx-auto d-block" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 19.93C17.05 19.43 20 15.93 20 12C20 11.66 19.97 11.33 19.92 11H17.5C17.15 11 16.8 11.18 16.6 11.47L14.71 14.3L12.56 10.72C12.38 10.42 12.06 10.23 11.71 10.22C11.36 10.21 11.02 10.38 10.82 10.67L8.6 14L6.15 11.55C5.96 11.36 5.71 11.25 5.44 11.25H4.06C4.02 11.5 4 11.75 4 12C4 16.08 7.05 19.44 11 19.93V17.5C11 16.95 11.45 16.5 12 16.5C12.55 16.5 13 16.95 13 17.5V19.93ZM4.42 9.25H5.44C6.24 9.25 6.99 9.57 7.56 10.14L9 11.58L10.79 8.9C11.37 8.05 12.35 7.5 13.43 7.5C14.15 7.5 14.84 7.73 15.42 8.16L18.42 10.4C18.66 10.58 18.98 10.61 19.25 10.49C18.44 6.78 15.54 3.91 11.83 3.12C11.53 3.05 11.23 3.16 11.04 3.4C10.85 3.64 10.79 3.95 10.88 4.25L11.56 6.5C11.76 7.15 11.39 7.82 10.75 8.02L8.5 8.71C7.85 8.91 7.18 8.54 6.98 7.9L6.64 6.78C5.55 7.42 4.67 8.25 4.42 9.25Z"/>
+        </svg>
+        <h1 class="fw-bold mb-3 text-primary">Kuis Master BI</h1>
+        <p class="lead mb-4">Uji pengetahuanmu tentang Business Intelligence, Data Mining, hingga Clustering!</p>
+        <div class="mb-4 text-start bg-dark p-3 rounded text-light border border-secondary">
+          <h5 class="text-warning">Aturan Main:</h5>
+          <ul class="mb-0">
+            <li>50 Pertanyaan berurutan dari Pertemuan 1 hingga 12.</li>
+            <li>Pilihan ganda akan selalu diacak.</li>
+            <li>Anda memiliki <b class="text-danger">3 Nyawa</b>.</li>
+            <li>Satu jawaban salah = hilang satu nyawa.</li>
+          </ul>
+        </div>
+        <button id="btn-start" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow">
+          <svg width="24" height="24" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+            <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+          </svg>
+          Mulai Permainan
+        </button>
+      </div>
+
+      <!-- GAME SCREEN -->
+      <div id="game-screen" class="d-none fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span id="topic-badge" class="badge bg-primary fs-6 py-2 px-3">Modul 1</span>
+          <div class="d-flex align-items-center gap-1" id="lives-container">
+            <!-- Hearts will be generated here -->
+          </div>
+        </div>
+        
+        <div class="progress mb-4">
+          <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+        </div>
+
+        <div class="card-custom p-4 mb-3">
+          <div class="d-flex justify-content-between mb-2">
+            <small class="text-muted fw-bold">Soal <span id="current-question-num">1</span>/50</small>
+            <small class="text-warning fw-bold">Skor: <span id="score-display">0</span></small>
+          </div>
+          <h4 id="question-text" class="fw-bold mb-4 mt-2">Memuat pertanyaan...</h4>
+          
+          <div id="options-container" class="d-flex flex-column">
+            <!-- Options will be generated here -->
+          </div>
+        </div>
+
+        <div class="text-end">
+          <button id="btn-next" class="btn btn-success btn-lg px-5 d-none rounded-pill fw-bold shadow">
+            Selanjutnya
+            <svg width="20" height="20" fill="currentColor" class="ms-2" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- RESULT SCREEN -->
+      <div id="result-screen" class="card-custom text-center p-5 d-none fade-in">
+        <div id="result-icon" class="mb-4"></div>
+        <h1 id="result-title" class="fw-bold mb-3">Game Over</h1>
+        <h4 class="mb-2">Skor Akhir Anda:</h4>
+        <h1 id="final-score" class="display-1 fw-bold text-warning mb-4">0</h1>
+        <p id="result-message" class="lead mb-4">Jangan menyerah, coba pelajari lagi materinya!</p>
+        <button id="btn-restart" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow">
+          <svg width="24" height="24" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+          </svg>
+          Main Lagi
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SCRIPT DATA & LOGIC -->
+    <script>
+      // Data Pertanyaan (50 Soal Berurutan Berdasarkan Modul)
+      const rawQuestions = [
+        // --- P01: Business Intelligence ---
+        { topic: "P01 - Business Intelligence", q: "Berkaitan dengan Multidimensional Database adalah, kecuali:", a: "Data validasi", w: ["Cube", "X, y, z", "Banyak dimensi", "Data Warehouse"] },
+        { topic: "P01 - Business Intelligence", q: "BI merupakan elemen yang sangat penting dalam dunia bisnis dewasa ini dan di masa depan, tanpa BI perusahaan akan:", a: "Sulit mengidentifikasi masalah", w: ["Sulit berkembang", "Sulit beradapatasi", "Sulit maju", "Sulit untung"] },
+        { topic: "P01 - Business Intelligence", q: "Data mart adalah bagian kecil dari:", a: "Data Warehouse", w: ["Metadata", "Data mining", "Data Primer", "Data Sekunder"] },
+        { topic: "P01 - Business Intelligence", q: "Pada dataset dilakukan perhitungan statistic sederhana, disebut dengan:", a: "Data Agregasi", w: ["Data transformasi", "Database", "Data mining", "Data cleaning"] },
+        { topic: "P01 - Business Intelligence", q: "Hasil dari BI dapat digunakan untuk berbagai macam keperluan, salah satunya:", a: "Pengolahan data Multidimensional", w: ["Kemajuan perusahaan", "Perusahaan berkembang", "Peningkatan gaji karyawan", "Otomatisasi"] },
+        
+        // --- P02: Decision Support System ---
+        { topic: "P02 - Decision Support System", q: "Data yang mencakup database yang berisi data relevan untuk beragam kondisi dan situasi disebut komponen:", a: "Data management", w: ["Model management", "Communication", "Knowledge management", "Data warehouse"] },
+        { topic: "P02 - Decision Support System", q: "Tahapan Decision Support System diawali dengan:", a: "Fase intelijensia", w: ["Fase design", "Fase implementasi", "Fase pilihan", "Fase komunikasi"] },
+        { topic: "P02 - Decision Support System", q: "Salah satu Jenis Decision Support System dan Informasi adalah:", a: "Terstruktur", w: ["Terkalkulasi", "Tersimpan", "Terbarukan", "Termanajmen"] },
+        { topic: "P02 - Decision Support System", q: "Membantu proses pengambilan keputusan dan juga fokus pada manajemen berdasarkan persepsi yang ada merupakan ... dari Decision Support System.", a: "Karakteristik", w: ["Variable", "Dimensi", "Pondasi", "Kelemahan"] },
+        { topic: "P02 - Decision Support System", q: "Fase yang memiliki rangkaian paling panjang dalam tahapan DSS adalah:", a: "Fase implementasi", w: ["Fase design", "Fase intelijensia", "Fase pilihan", "Fase evaluasi"] },
+        
+        // --- P03: Data Warehouse ---
+        { topic: "P03 - Data Warehouse", q: "Data warehouse adalah salah satu parameter penunjang kegiatan:", a: "Business Intelligence", w: ["Data Mining", "OLAP", "OLTP", "ETL"] },
+        { topic: "P03 - Data Warehouse", q: "Secara fungsional, Data warehouse utamanya menyimpan data:", a: "Histories (Historis)", w: ["Future", "Feature", "Analysis", "Mining"] },
+        { topic: "P03 - Data Warehouse", q: "Salah satu fungsi atau manfaat utama dari data warehouse adalah membantu dalam:", a: "Pengambilan keputusan", w: ["Forecasting langsung", "Storage sementara", "Ekstraksi data mentah", "Transformasi data operasional"] },
+        { topic: "P03 - Data Warehouse", q: "Dalam komponen Data Warehouse, Metadata diartikan sebagai:", a: "Data dari data", w: ["Data fisik", "Business Intelligence", "Agregasi data", "Collecting data"] },
+        { topic: "P03 - Data Warehouse", q: "Pada Skema Bintang (Star Schema), isi dari tabel fakta (Fact Table) utamanya bersifat:", a: "Numeric (Numerik)", w: ["Huruf", "Nominal", "Tanggal", "Teks"] },
+        
+        // --- P04: Profesi BI Analyst ---
+        { topic: "P04 - Profesi BI Analyst", q: "Dalam hierarki yang dijelaskan, jenjang karier tertinggi di bidang business intelligence adalah:", a: "Business intelligence manager", w: ["Administrator", "Master data services", "Owner", "Director"] },
+        { topic: "P04 - Profesi BI Analyst", q: "Pengetahuan terkait bisnis dan finansial sangat diwajibkan bagi peran:", a: "Business Intelligence Analyst", w: ["HRD", "Finance Staff", "Owner", "Director"] },
+        { topic: "P04 - Profesi BI Analyst", q: "Salah satu tugas atau pekerjaan utama seorang Business Intelligence Analyst adalah:", a: "Menafsirkan data", w: ["Update informasi IT", "Belajar tools data mining", "Mengambil master degree", "Transaksi data harian"] },
+        { topic: "P04 - Profesi BI Analyst", q: "Tanggung Jawab spesifik dari seorang Business Intelligence Analyst antara lain:", a: "Membagikan hasil penemuan", w: ["Menjual hasil penemuan", "Menyimpan hasil penemuan di brankas", "Mempelajari hasil penemuan diam-diam", "Melaporkan hasil penemuan ke polisi"] },
+        { topic: "P04 - Profesi BI Analyst", q: "Yang BUKAN merupakan Skill Wajib bagi seorang Business Intelligence Analyst adalah:", a: "Reaktif", w: ["Analitik", "Research", "Tools Database", "Komunikasi"] },
+        
+        // --- P05: Data Mining ---
+        { topic: "P05 - Data Mining", q: "Evaluasi kualitas untuk metode Clustering seringkali menggunakan metrik:", a: "Silhouette coefficient", w: ["RMSE", "MAPE", "Support", "Confidence"] },
+        { topic: "P05 - Data Mining", q: "Tahapan paling awal dari proses data mining (KDD) adalah:", a: "Data cleansing", w: ["Integrasi data", "Seleksi data", "Data transformation", "Data validasi"] },
+        { topic: "P05 - Data Mining", q: "Profiling konsumen yang merupakan cara menentukan karakter konsumen adalah analisis dari sisi:", a: "Customer", w: ["Perusahaan", "Global", "Market", "User"] },
+        { topic: "P05 - Data Mining", q: "Proses pengumpulan dan pengolahan data yang dilakukan menggunakan tools dan perhitungan statistic disebut juga:", a: "Data mining", w: ["Data cleansing", "Integrasi data", "Seleksi data", "Data validasi"] },
+        { topic: "P05 - Data Mining", q: "Untuk melakukan identifikasi relasi atau hubungan antar variabel/objek, digunakan fungsi data mining tipe:", a: "Asosiasi", w: ["Peramalan", "Clustering", "Prediksi", "Klasifikasi"] },
+        
+        // --- P06: Data Preparation ---
+        { topic: "P06 - Data Preparation", q: "Mengidentifikasi dan melihat adanya missing value biasanya dilakukan pada tahap:", a: "Data cleaning", w: ["Data discovery", "Data collect", "Data mining", "Data warehouse"] },
+        { topic: "P06 - Data Preparation", q: "Membuat data lebih mudah untuk dibaca dan diproses adalah manfaat dari tahapan:", a: "Pre-processing", w: ["Discovery", "Cleaning", "Collecting", "Warehousing"] },
+        { topic: "P06 - Data Preparation", q: "Sebuah objek data yang nilainya berbeda jauh dan berada di luar dari kumpulan data kebanyakan disebut:", a: "Pencilan (Outlier)", w: ["Missing value", "Noisy", "Agregasi", "Smoothing"] },
+        { topic: "P06 - Data Preparation", q: "Salah satu cara untuk mengatasi atau mengisi missing value yang jumlahnya hanya sedikit adalah dengan:", a: "Diisi secara manual", w: ["Modus", "Median", "Mean", "Dihapus seluruh databasenya"] },
+        { topic: "P06 - Data Preparation", q: "Salah satu alasan atau penyebab utama mengapa harus dilakukan data pre-processing adalah:", a: "Semua benar (Tidak lengkap, beragam, hilang)", w: ["Hanya karena data tidak lengkap", "Hanya karena data beragam", "Hanya karena data sedikit", "Hanya karena data hilang"] },
+        
+        // --- P07: Eksplorasi Data ---
+        { topic: "P07 - Eksplorasi Data", q: "Karakteristik dari sebuah item atau individu dalam sebuah populasi disebut:", a: "Variable", w: ["Populasi", "Sample", "Grafik", "Data"] },
+        { topic: "P07 - Eksplorasi Data", q: "Jumlah hewan ternak atau kambing kurban yang dihitung cacahannya merupakan contoh dari variabel:", a: "Diskret (Discreet)", w: ["Kontinu", "Nominal", "Sample", "Populasi"] },
+        { topic: "P07 - Eksplorasi Data", q: "Membandingkan jumlah penjualan dari berbagai jenis kategori mobil paling tepat disajikan menggunakan diagram:", a: "Batang", w: ["Word cloud", "Corong", "Baris", "Pie"] },
+        { topic: "P07 - Eksplorasi Data", q: "Trend pertumbuhan atau pergerakan keuangan sebuah perusahaan dari waktu ke waktu lebih tepat disajikan dengan diagram:", a: "Garis", w: ["Corong", "Baris", "Batang", "Pie"] },
+        { topic: "P07 - Eksplorasi Data", q: "Tipe data seperti Nomor WA, Kode Pos, atau Status Pekerjaan (kategori tanpa peringkat) termasuk dalam jenis data:", a: "Nominal", w: ["Numeric", "Ordinal", "Mentah", "Mining"] },
+        
+        // --- P09: Metode Regresi ---
+        { topic: "P09 - Metode Regresi", q: "Uji korelasi untuk data skala interval dan/atau rasio yang menggunakan statistik parametriks adalah:", a: "Pearson Product Moment", w: ["Koefisien Kontigency", "Kendal Tau", "Korelasi Rank Sparman", "Uji Chi-Square"] },
+        { topic: "P09 - Metode Regresi", q: "Koefisien korelasi dinotasikan dengan r (berkisar -1 hingga +1). Tanda positif atau negatif dari nilai korelasi ini menunjukan:", a: "Arah Korelasi", w: ["Semua Salah", "Kekuatan Korelasi", "Kekuatan asosiasi korelasi", "Signifikansi"] },
+        { topic: "P09 - Metode Regresi", q: "Uji Kolmogorov-Smirnov satu sampel digunakan untuk mengetahui jenis distribusi data. Uji ini dapat membuktikan data berdistribusi:", a: "Semuanya benar (Normal, Poisson, Uniform)", w: ["Normal saja", "Poisson saja", "Uniform saja", "Eksponensial saja"] },
+        { topic: "P09 - Metode Regresi", q: "Jika seorang guru membandingkan hasil pre-test dan post-test kepemimpinan pada 12 orang yang SAMA, maka digunakan uji-t jenis:", a: "Paired sampel t-test saja", w: ["Independent t-test dan paired", "Independent t-test saja", "Independent atau paired t-test", "ANOVA"] },
+        { topic: "P09 - Metode Regresi", q: "Dalam analisis korelasi inferensial, kita mengestimasi atau menduga nilai koefisien korelasi dari sebuah:", a: "Populasi", w: ["Determinasi", "Sampel", "Sub-Sampel", "Varians"] },
+        
+        // --- P10: Klasifikasi dan Prediksi ---
+        { topic: "P10 - Klasifikasi & Prediksi", q: "Perbedaan utama antara pemodelan klasifikasi dan regresi prediktif adalah:", a: "Klasifikasi memprediksi atribut kelas kategori, regresi memprediksi atribut kontinu", w: ["Klasifikasi menggunakan data numerik, regresi menggunakan teks", "Klasifikasi tidak memerlukan data latih, regresi memerlukan", "Klasifikasi termasuk unsupervised, regresi supervised", "Tidak ada perbedaan, keduanya sama saja"] },
+        { topic: "P10 - Klasifikasi & Prediksi", q: "Sekumpulan data atau record yang label kelasnya sudah diketahui dan digunakan untuk membangun/melatih model klasifikasi disebut:", a: "Training set", w: ["Test set", "Validation set", "Attribute set", "Confusion matrix"] },
+        { topic: "P10 - Klasifikasi & Prediksi", q: "Model klasifikasi yang tidak hanya memprediksi, tetapi juga bertindak sebagai alat penjelas untuk membedakan karakteristik objek antar kelas disebut:", a: "Pemodelan Deskriptif", w: ["Pemodelan Hierarki", "Pemodelan Asosiasi", "Pemodelan Prediktif", "Pemodelan Linear"] },
+        { topic: "P10 - Klasifikasi & Prediksi", q: "Tabel khusus yang digunakan untuk menabulasikan berapa banyak record yang diprediksi benar dan salah oleh model klasifikasi disebut:", a: "Confusion Matrix", w: ["Matriks Korelasi", "Tabel Relasional", "Tabel Regresi", "Taksonomi Data"] },
+        { topic: "P10 - Klasifikasi & Prediksi", q: "Jika f11 dan f00 adalah prediksi benar, dan f10 serta f01 adalah prediksi salah. Rumus (f10 + f01) / Total Prediksi digunakan untuk menghitung:", a: "Error Rate", w: ["Akurasi", "Recall", "Precision", "F-Measure"] },
+        
+        // --- P11 & P12: Clustering ---
+        { topic: "P11 & P12 - Clustering", q: "Analisa clustering bertujuan mengidentifikasi cluster pada data. Definisi dasar dari cluster itu sendiri adalah:", a: "Kumpulan objek data yang mirip satu sama lain", w: ["Prediksi nilai kontinu di masa depan", "Himpunan atribut yang saling bertentangan", "Label kategori yang sudah didefinisikan sebelumnya", "Himpunan aturan (rules) dalam basis data"] },
+        { topic: "P11 & P12 - Clustering", q: "Perbedaan utama pendekatan teknik clustering dibandingkan dengan model prediktif (seperti klasifikasi) adalah:", a: "Clustering tidak memerlukan (tidak memiliki) atribut target / label kelas", w: ["Clustering selalu menggunakan perhitungan statistik parametrik", "Clustering hanya bisa memproses data berformat teks", "Clustering membutuhkan Training Set yang sangat besar", "Tidak ada perbedaan, keduanya supervised learning"] },
+        { topic: "P11 & P12 - Clustering", q: "Proses Clustering yang diorganisasi sedemikian rupa ke dalam struktur hirarkikal (hierarchical) berguna untuk mendefinisikan:", a: "Taksonomi data", w: ["Akurasi data", "Error rate", "Outlier boundaries", "Variabel target"] },
+        { topic: "P11 & P12 - Clustering", q: "Berdasarkan materi yang dipelajari, salah satu kelebihan atau keuntungan dari teknik clustering adalah:", a: "Sangat efisien untuk proses deteksi pencilan (outlier)", w: ["Mudah diterapkan tanpa perlu mengatur parameter apapun", "Menghasilkan akurasi prediksi masa depan 100%", "Bisa menggantikan proses ekstraksi ETL", "Hanya membutuhkan memori komputer yang kecil"] },
+        { topic: "P11 & P12 - Clustering", q: "Kekurangan utama dari beberapa metode clustering, khususnya jika menggunakan algoritma K-Means adalah:", a: "Sangat bergantung pada pemilihan nilai parameter yang tepat diawal (seperti nilai K)", w: ["Tidak bisa digunakan untuk eksplorasi big data sama sekali", "Selalu menghasilkan taksonomi yang berantakan", "Membutuhkan label class yang lengkap dan valid", "Hanya bisa mengelompokkan maksimal 2 cluster"] }
+      ];
+
+      // Formatter untuk mengubah format soal menjadi format objek standar
+      const formatQuestions = () => {
+        return rawQuestions.map(item => {
+          let options = [
+            { text: item.a, correct: true },
+            ...item.w.map(wText => ({ text: wText, correct: false }))
+          ];
+          // Acak Pilihan (PG)
+          options.sort(() => Math.random() - 0.5);
+          return { topic: item.topic, question: item.q, options: options };
+        });
+      };
+
+      // State Game
+      let questions = [];
+      let currentIdx = 0;
+      let score = 0;
+      let lives = 3;
+      const MAX_LIVES = 3;
+
+      // DOM Elements
+      const startScreen = document.getElementById('start-screen');
+      const gameScreen = document.getElementById('game-screen');
+      const resultScreen = document.getElementById('result-screen');
+      
+      const btnStart = document.getElementById('btn-start');
+      const btnNext = document.getElementById('btn-next');
+      const btnRestart = document.getElementById('btn-restart');
+      
+      const topicBadge = document.getElementById('topic-badge');
+      const qNumText = document.getElementById('current-question-num');
+      const scoreDisplay = document.getElementById('score-display');
+      const progressBar = document.getElementById('progress-bar');
+      const questionText = document.getElementById('question-text');
+      const optionsContainer = document.getElementById('options-container');
+      const livesContainer = document.getElementById('lives-container');
+
+      // SVG Icons
+      const heartIcon = `<svg class="lives-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+      const trophyIcon = `<svg width="80" height="80" fill="#f59e0b" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935zM3.504 1c.007.517.026 1.006.056 1.469.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 8 10s2.706-.52 3.57-2.864c.413-1.12.74-2.64.87-4.667.03-.463.049-.952.056-1.469H3.504z"/></svg>`;
+      const sadIcon = `<svg width="80" height="80" fill="#ef4444" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/></svg>`;
+
+      // Initialize
+      function initGame() {
+        questions = formatQuestions();
+        currentIdx = 0;
+        score = 0;
+        lives = MAX_LIVES;
+        
+        startScreen.classList.add('d-none');
+        resultScreen.classList.add('d-none');
+        gameScreen.classList.remove('d-none');
+        
+        updateLivesUI();
+        renderQuestion();
+      }
+
+      function updateLivesUI() {
+        livesContainer.innerHTML = '';
+        for(let i=0; i<MAX_LIVES; i++) {
+          if(i < lives) {
+            livesContainer.innerHTML += heartIcon;
+          } else {
+            livesContainer.innerHTML += heartIcon.replace('class="lives-icon"', 'class="lives-icon lost"');
+          }
+        }
+      }
+
+      function renderQuestion() {
+        btnNext.classList.add('d-none');
+        
+        const q = questions[currentIdx];
+        topicBadge.textContent = q.topic;
+        qNumText.textContent = currentIdx + 1;
+        scoreDisplay.textContent = score;
+        
+        // Progress bar
+        const progressPercent = ((currentIdx) / questions.length) * 100;
+        progressBar.style.width = progressPercent + '%';
+
+        // Animate text change
+        questionText.classList.remove('fade-in');
+        void questionText.offsetWidth; // trigger reflow
+        questionText.textContent = q.question;
+        questionText.classList.add('fade-in');
+
+        // Render options
+        optionsContainer.innerHTML = '';
+        q.options.forEach((opt, index) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn fs-5 shadow-sm fade-in';
+          btn.style.animationDelay = `${index * 0.1}s`;
+          btn.textContent = opt.text;
+          btn.onclick = () => handleAnswer(btn, opt.correct);
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      function handleAnswer(selectedBtn, isCorrect) {
+        // Disable all buttons
+        const allBtns = optionsContainer.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (isCorrect) {
+          selectedBtn.classList.add('correct');
+          score += 10;
+          scoreDisplay.textContent = score;
+        } else {
+          selectedBtn.classList.add('wrong');
+          selectedBtn.classList.add('shake');
+          lives--;
+          updateLivesUI();
+          
+          // Show correct answer
+          allBtns.forEach((b, i) => {
+            if (questions[currentIdx].options[i].correct) {
+              b.classList.add('correct');
+            }
+          });
+        }
+
+        btnNext.classList.remove('d-none');
+      }
+
+      function goNext() {
+        if (lives <= 0) {
+          endGame(false);
+          return;
+        }
+
+        currentIdx++;
+        if (currentIdx < questions.length) {
+          renderQuestion();
+        } else {
+          endGame(true);
+        }
+      }
+
+      function endGame(isVictory) {
+        gameScreen.classList.add('d-none');
+        resultScreen.classList.remove('d-none');
+        
+        const resIcon = document.getElementById('result-icon');
+        const resTitle = document.getElementById('result-title');
+        const resMsg = document.getElementById('result-message');
+        const finalScore = document.getElementById('final-score');
+        
+        finalScore.textContent = score;
+
+        if (isVictory) {
+          resIcon.innerHTML = trophyIcon;
+          resTitle.textContent = "Luar Biasa!";
+          resTitle.className = "fw-bold mb-3 text-warning";
+          resMsg.textContent = "Selamat! Anda telah menyelesaikan semua modul dan sah menjadi Master BI!";
+        } else {
+          resIcon.innerHTML = sadIcon;
+          resTitle.textContent = "Game Over";
+          resTitle.className = "fw-bold mb-3 text-danger";
+          resMsg.textContent = `Nyawa Anda habis di soal ke-${currentIdx + 1}. Pelajari lagi materi dan coba kembali!`;
+        }
+      }
+
+      // Event Listeners
+      btnStart.addEventListener('click', initGame);
+      btnNext.addEventListener('click', goNext);
+      btnRestart.addEventListener('click', initGame);
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </body>
+</html>
