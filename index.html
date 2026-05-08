@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- SEO & Metadata -->
+    <title>Business Intelligence - Dashboard Materi & Dataset</title>
+    <meta name="description" content="Repositori lengkap materi Business Intelligence, termasuk Jupyter Notebooks, dataset praktikum, latihan data mining, dan quiz interaktif.">
+    <meta name="keywords" content="Business Intelligence, BI, Data Mining, Klasifikasi, Jupyter Notebook, Dataset PMB, Fruit Glow Sales, Quiz BI">
+    <meta name="author" content="Faruq">
+    
+    <!-- AI Indexing & Robots -->
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
+    
+    <!-- Open Graph (Social Media & Link Previews) -->
+    <meta property="og:title" content="Business Intelligence Dashboard">
+    <meta property="og:description" content="Akses materi praktikum, dataset, dan simulasi Business Intelligence dalam satu dashboard.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://faruq1997.github.io/Bisnis_Intelligence/">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+      .hero-section {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        color: white;
+        padding: 60px 0;
+        margin-bottom: 40px;
+        border-radius: 0 0 2rem 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+      .card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 100%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      }
+      .list-group-item {
+        border-left: none;
+        border-right: none;
+        padding: 0.75rem 1.25rem;
+      }
+      .list-group-item:first-child { border-top: none; }
+      .list-group-item:last-child { border-bottom: none; }
+      .icon-badge {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-right: 15px;
+      }
+      .bg-notebook { background-color: #e7f1ff; color: #0d6efd; }
+      .bg-exercise { background-color: #fff4e5; color: #fd7e14; }
+      .bg-quiz { background-color: #f0fdf4; color: #198754; }
+      .bg-data { background-color: #f8f9fa; color: #6c757d; }
+      
+      .file-link {
+        text-decoration: none;
+        color: #444;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+      }
+      .file-link:hover { color: #0d6efd; }
+      
+      .badge-ext { font-size: 0.7rem; vertical-align: middle; }
+    </style>
+  </head>
+  <body>
+
+    <!-- Hero Header -->
+    <header class="hero-section text-center">
+      <div class="container">
+        <h1 class="display-4 fw-bold">Business Intelligence</h1>
+        <p class="lead">Dashboard Repositori Materi, Latihan, dan Dataset Praktikum</p>
+        <a href="https://faruq1997.github.io/Bisnis_Intelligence/" target="_blank" rel="noopener noreferrer" class="btn btn-light btn-sm rounded-pill px-4 mt-2">
+          Lihat di GitHub
+        </a>
+      </div>
+    </header>
+
+    <div class="container pb-5">
+      <div class="row g-4">
+        
+        <!-- Section: Interactive & Quizzes -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3 d-flex align-items-center">
+                <span class="icon-badge bg-quiz">🎯</span> Quiz & Simulasi
+              </h5>
+              <div class="list-group list-group-flush">
+                <a href="bi-quiz/index.html" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">BI Quiz Utama</a>
+                <a href="bi_quiz_bd/index.html" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">BI Quiz BD</a>
+                <a href="simulasi.html" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">Simulasi BI</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Jupyter Notebooks -->
+        <div class="col-md-12 col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3 d-flex align-items-center">
+                <span class="icon-badge bg-notebook">📓</span> Notebooks (.ipynb)
+              </h5>
+              <div class="list-group list-group-flush">
+                <a href="Business_Intelligence_1.ipynb" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Materi Bisnis Intelligence 1
+                </a>
+                <a href="Business_Intelligence_2.ipynb" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Materi Bisnis Intelligence 2
+                </a>
+                <a href="Business_Intelligence_3.ipynb" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Materi Bisnis Intelligence 3
+                </a>
+                <a href="Business_Intelligence_4.ipynb" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Materi Bisnis Intelligence 4
+                </a>
+                <a href="Business_Intelligence_5.ipynb" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Materi Bisnis Intelligence 5
+                </a>
+                <a href="Contoh_Tugas.ipynb" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link text-muted">
+                  Contoh Tugas Mahasiswa
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Latihan (HTML) -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3 d-flex align-items-center">
+                <span class="icon-badge bg-exercise">💻</span> Latihan & Playground
+              </h5>
+              <div class="list-group list-group-flush">
+                <a href="latihan/pertemuan4.html" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">Latihan Pertemuan 4</a>
+                <a href="latihan/pertemuan5.html" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">Latihan Pertemuan 5</a>
+                <a href="latihan/playground_datamining.html" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link text-primary">Playground Data Mining</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Data Files -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3 d-flex align-items-center">
+                <span class="icon-badge bg-data">📊</span> Dataset (XLSX)
+              </h5>
+              <div class="list-group list-group-flush">
+                <a href="Data_PMB_UPG_2020_2024_Final.xlsx" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">Data PMB UPG (2020-2024)</a>
+                <a href="Data_Peminjaman.xlsx" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">Data Peminjaman</a>
+                <a href="fruit_glow_sales2024.xlsx" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">Fruit Glow Sales 2024</a>
+                <a href="latihan_klasifikasi.xlsx" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">Latihan Klasifikasi</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Dokumentasi -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-primary">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3">📝 Dokumentasi</h5>
+              <div class="list-group list-group-flush">
+                <a href="catatan_pertemuan5.md" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Catatan Pertemuan 5 <span class="badge bg-secondary ms-2 badge-ext">MD</span>
+                </a>
+                <a href="latihan1_studikasus_fruitglowsales2024.txt" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Studi Kasus Fruit Glow <span class="badge bg-secondary ms-2 badge-ext">TXT</span>
+                </a>
+                <a href="README.md" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action file-link">
+                  Readme <span class="badge bg-secondary ms-2 badge-ext">MD</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="text-center py-4 text-muted border-top bg-white mt-auto">
+      <div class="container">
+        <small>&copy; 2024 Business Intelligence Repository. Dioptimalkan untuk Search Engine & AI Indexing.</small>
+      </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
