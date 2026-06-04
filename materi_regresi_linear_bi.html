@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi BI: Regresi Linear</title>
+    <!-- Tailwind CSS untuk Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax untuk merender rumus matematika -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Chart.js untuk visualisasi data -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .math-display { overflow-x: auto; padding: 1rem 0; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- Header -->
+    <header class="bg-indigo-900 text-white py-12 px-6 shadow-lg">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">Business Intelligence: Regresi Linear & Multivariate</h1>
+            <p class="text-indigo-200 text-lg">Program Studi Bisnis Digital | Materi Konseptual & Praktis</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 py-12 space-y-12">
+
+        <!-- Pengantar (Bahasa Awam) -->
+        <section class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-2xl font-bold text-indigo-800 mb-4">1. Apa itu Regresi? (Penjelasan Awam)</h2>
+            <p class="mb-4">
+                Bayangkan Anda sedang menebak berapa pengeluaran bulanan seseorang berdasarkan gajinya. Logika dasarnya: <strong>semakin besar gaji, biasanya semakin besar pengeluarannya.</strong>
+            </p>
+            <p class="mb-4">
+                Dalam dunia Bisnis Digital, <strong>Regresi</strong> adalah alat matematika untuk mencari tahu "seberapa kuat" dan "seperti apa" hubungan antara satu hal (penyebab) dengan hal lain (akibat). Tujuannya satu: <strong>Prediksi masa depan berdasarkan pola masa lalu.</strong>
+            </p>
+        </section>
+
+        <!-- Tahapan Analisis (Pipeline) -->
+        <section class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-2xl font-bold text-indigo-800 mb-4">2. Studi Kasus End-to-End: Membangun Model Prediksi</h2>
+            <p class="mb-6 text-slate-700">Mari kita bedah alur kerja nyata. Kasus: <strong>SneakerDigital</strong> ingin memprediksi Penjualan (Y) berdasarkan Budget Iklan (X₁) dan Persentase Diskon (X₂).</p>
+            
+            <div class="space-y-8">
+                <!-- Tahap 1: Data Awal -->
+                <div class="border-l-4 border-indigo-500 pl-4">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">Tahap 1: Data Awal (Mentah & Kotor)</h3>
+                    <p class="text-slate-600 text-sm mb-3">Data ditarik dari database operasional. Di dunia nyata, data <strong>selalu cacat</strong>. Perhatikan baris merah yang penuh dengan <em>typo</em> dan data kosong.</p>
+                    <div class="overflow-x-auto rounded-lg border border-slate-200 mb-2">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-100 text-slate-700">
+                                <tr>
+                                    <th class="px-4 py-2 border-b">Bulan</th>
+                                    <th class="px-4 py-2 border-b">Iklan (Juta) - X₁</th>
+                                    <th class="px-4 py-2 border-b">Diskon (%) - X₂</th>
+                                    <th class="px-4 py-2 border-b">Terjual - Y</th>
+                                    <th class="px-4 py-2 border-b text-red-600">Kondisi Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="px-4 py-2 border-b">Januari</td><td class="px-4 py-2 border-b">2</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b">34</td><td class="px-4 py-2 border-b text-slate-400">Aman</td></tr>
+                                <tr><td class="px-4 py-2 border-b">Februari</td><td class="px-4 py-2 border-b">4</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b">48</td><td class="px-4 py-2 border-b text-slate-400">Aman</td></tr>
+                                <tr class="bg-red-50"><td class="px-4 py-2 border-b">Maret</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b font-bold text-red-600">0.2</td><td class="px-4 py-2 border-b">50</td><td class="px-4 py-2 border-b text-red-600">Salah Skala (0.2 vs 20)</td></tr>
+                                <tr><td class="px-4 py-2 border-b">April</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b">55</td><td class="px-4 py-2 border-b text-slate-400">Aman</td></tr>
+                                <tr><td class="px-4 py-2 border-b">Mei</td><td class="px-4 py-2 border-b">7</td><td class="px-4 py-2 border-b">15</td><td class="px-4 py-2 border-b">69</td><td class="px-4 py-2 border-b text-slate-400">Aman</td></tr>
+                                <tr class="bg-red-50"><td class="px-4 py-2 border-b font-bold text-red-600">june</td><td class="px-4 py-2 border-b font-bold text-red-600">800</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b">76</td><td class="px-4 py-2 border-b text-red-600">Outlier & Format Teks</td></tr>
+                                <tr><td class="px-4 py-2 border-b">Juli</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b">20</td><td class="px-4 py-2 border-b">90</td><td class="px-4 py-2 border-b text-slate-400">Aman</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tahap 2: Preprocessing -->
+                <div class="border-l-4 border-amber-500 pl-4">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">Tahap 2: Preprocessing (Data Setelah Dicuci)</h3>
+                    <p class="text-slate-600 text-sm mb-3">Jika tabel kotor dipaksa masuk ke mesin komputasi, model akan hancur (<strong>GIGO: Garbage In, Garbage Out</strong>). Berikut adalah <strong>alasan kritis</strong> mengapa analis melakukan perbaikan pada data tersebut:</p>
+                    
+                    <ul class="list-disc list-inside text-sm text-slate-700 mb-4 space-y-2">
+                        <li><strong>Diskon Maret direvisi dari 0.2 jadi 20 (Inkonsistensi Skala):</strong> Staf menginput format desimal (0.2) padahal standar kolom sistem adalah persentase bulat (20). Jika tidak diubah, mesin regresi akan mengira diskonnya nyaris 0, yang akan merusak akurasi koefisien diskon (X₂).</li>
+                        <li><strong>Format "june" direvisi jadi "Juni" (Inkonsistensi Teks):</strong> Meskipun ini data teks kategorikal, <em>tools</em> BI seperti Tableau/PowerBI akan membaca "Juni" dan "june" sebagai dua bulan yang berbeda. Ini akan membuat <em>dashboard</em> laporan rusak. Penulisan harus diseragamkan.</li>
+                        <li><strong>Iklan Juni direvisi dari 800 jadi 8 (Outlier Ekstrem):</strong> Algoritma Regresi Linear <em>sangat sensitif</em> terhadap nilai rata-rata. Angka 800 (kesalahan ketik) akan "menarik paksa" garis rumus ke atas. Akibatnya, seluruh prediksi manajemen di masa depan akan terlalu tinggi (over-estimasi).</li>
+                    </ul>
+                    
+                    <div class="overflow-x-auto rounded-lg border border-emerald-200 mb-2 shadow-sm">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-emerald-100 text-emerald-900">
+                                <tr>
+                                    <th class="px-4 py-2 border-b">Bulan</th>
+                                    <th class="px-4 py-2 border-b">Iklan (X₁)</th>
+                                    <th class="px-4 py-2 border-b">Diskon (X₂)</th>
+                                    <th class="px-4 py-2 border-b font-bold">Terjual (Y)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Januari</td><td class="px-4 py-2 border-b">2</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b font-semibold">34</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Februari</td><td class="px-4 py-2 border-b">4</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b font-semibold">48</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Maret <span class="text-xs text-emerald-600">(Revisi)</span></td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b font-bold text-emerald-700">20</td><td class="px-4 py-2 border-b font-semibold">50</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">April</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b font-semibold">55</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Mei</td><td class="px-4 py-2 border-b">7</td><td class="px-4 py-2 border-b">15</td><td class="px-4 py-2 border-b font-semibold">69</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b font-bold text-emerald-700">Juni <span class="text-xs text-emerald-600">(Revisi)</span></td><td class="px-4 py-2 border-b font-bold text-emerald-700">8</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b font-semibold">76</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Juli</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b">20</td><td class="px-4 py-2 border-b font-semibold">90</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tahap 2: Preprocessing -->
+                <div class="border-l-4 border-amber-500 pl-4">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">Tahap 2: Preprocessing (Data Setelah Dicuci)</h3>
+                    <p class="text-slate-600 text-sm mb-3">Jika tabel kotor dipaksa masuk ke mesin komputasi, model akan hancur (<strong>GIGO: Garbage In, Garbage Out</strong>). Berikut adalah <strong>alasan kritis</strong> mengapa analis melakukan perbaikan pada data tersebut:</p>
+                    
+                    <ul class="list-disc list-inside text-sm text-slate-700 mb-4 space-y-2">
+                        <li><strong>Kenapa Maret dihapus? (Missing Value):</strong> Variabel penyebab utamanya (Iklan) kosong. Mesin matematika tidak bisa belajar dari kekosongan. Menebak-nebak isinya (imputasi sembarangan) justru akan menipu model. Keputusan paling lugas: hapus baris ini agar data tetap murni.</li>
+                        <li><strong>Kenapa Iklan Juni direvisi dari 1000 jadi 8? (Outlier):</strong> Algoritma Regresi Linear <em>sangat sensitif</em> terhadap nilai rata-rata. Angka ekstrem (1 Miliar) ini akan "menarik paksa" garis rumus ke atas. Akibatnya, semua prediksi masa depan akan meleset (over-estimasi). Setelah investigasi lapangan, terbukti ini murni <em>human error</em> (salah ketik) saat input Excel.</li>
+                        <li><strong>Kenapa Diskon Juli direvisi dari 999 jadi 20? (Logical Error):</strong> Secara logika bisnis, diskon 999% tidak masuk akal (maksimal 100% atau gratis). Ini adalah <em>noise</em> sistem yang akan merusak bobot pengaruh variabel X₂ (Diskon) jika dibiarkan.</li>
+                    </ul>
+                    
+                    <div class="overflow-x-auto rounded-lg border border-emerald-200 mb-2 shadow-sm">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-emerald-100 text-emerald-900">
+                                <tr>
+                                    <th class="px-4 py-2 border-b">Bulan</th>
+                                    <th class="px-4 py-2 border-b">Iklan (X₁)</th>
+                                    <th class="px-4 py-2 border-b">Diskon (X₂)</th>
+                                    <th class="px-4 py-2 border-b font-bold">Terjual (Y)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Januari</td><td class="px-4 py-2 border-b">2</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b font-semibold">34</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Februari</td><td class="px-4 py-2 border-b">4</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b font-semibold">48</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">April</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b">5</td><td class="px-4 py-2 border-b font-semibold">55</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Mei</td><td class="px-4 py-2 border-b">7</td><td class="px-4 py-2 border-b">15</td><td class="px-4 py-2 border-b font-semibold">69</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Juni <span class="text-xs text-emerald-600">(Revisi)</span></td><td class="px-4 py-2 border-b font-bold text-emerald-700">8</td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b font-semibold">76</td></tr>
+                                <tr class="bg-emerald-50/30"><td class="px-4 py-2 border-b">Juli <span class="text-xs text-emerald-600">(Revisi)</span></td><td class="px-4 py-2 border-b">10</td><td class="px-4 py-2 border-b font-bold text-emerald-700">20</td><td class="px-4 py-2 border-b font-semibold">90</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tahap 3: EDA -->
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">Tahap 3: Exploratory Data Analysis (EDA)</h3>
+                    <p class="text-slate-600 text-sm mb-3">Sebelum membuat rumus, kita petakan data bersih ke dalam grafik (Scatter Plot). Tujuannya melihat dengan "mata telanjang" apakah ada pola hubungan kausalitas awal.</p>
+                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-inner max-w-2xl mx-auto">
+                        <canvas id="edaChart" height="150"></canvas>
+                        <p class="text-center text-xs text-slate-500 mt-2"><strong>Fakta Klinis:</strong> Titik-titik menyebar secara solid membentuk garis menanjak. Data Iklan terbukti valid memiliki hubungan linear dengan Penjualan.</p>
+                    </div>
+                </div>
+
+                <!-- Tahap 4: Model -->
+                <div class="border-l-4 border-emerald-500 pl-4">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">Tahap 4: Model (Rumus Prediksi)</h3>
+                    <p class="text-slate-600 text-sm mb-3">Data dimasukkan ke dalam algoritma <em>Machine Learning</em>, dan mesin menghasilkan 2 alternatif model untuk kita gunakan:</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                        <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200 text-center">
+                            <span class="block font-bold text-slate-700 mb-1">Model 1: Linear Sederhana</span>
+                            <span class="text-xs text-slate-500 block mb-2">(Hanya pakai Iklan)</span>
+                            <span class="block text-emerald-800 font-black text-xl">Y = 20 + 7X₁</span>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                            <span class="block font-bold text-slate-700 mb-1">Model 2: Multivariate</span>
+                            <span class="text-xs text-slate-500 block mb-2">(Pakai Iklan + Diskon)</span>
+                            <span class="block text-blue-800 font-black text-xl">Y = 10 + 5X₁ + 2X₂</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-700"><strong>Interpretasi Multivariate:</strong> Basis organik kita adalah 10 sepatu. Setiap kenaikan Rp 1 Juta iklan nambah 5 sepatu, dan setiap kenaikan 1% diskon nambah 2 sepatu.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Playground 1 (Simple) -->
+        <section class="bg-indigo-50 p-8 rounded-xl shadow-sm border border-indigo-200">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="text-3xl">🎯</span>
+                <h2 class="text-2xl font-bold text-indigo-900">Playground 1: Regresi Linear Sederhana</h2>
+            </div>
+            <p class="text-indigo-700 mb-6 text-sm">Visualisasi <strong>Model 1</strong> (hanya 1 variabel: Iklan). Titik Merah akan "terkunci" dan meluncur sepanjang Garis Putus-putus (Rumus Model) saat Anda menggeser slider.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <!-- Kontrol -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <p class="text-xs px-2 py-1 bg-slate-100 rounded text-slate-600 mb-6 font-mono inline-block">Persamaan: Y = 20 + 7X₁</p>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex justify-between">
+                            <span>Budget Iklan (X₁)</span>
+                            <span class="text-indigo-600 font-bold"><span id="valAds1">10</span> Juta</span>
+                        </label>
+                        <input type="range" id="sliderAds1" min="0" max="20" step="1" value="10" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                    </div>
+                    <div class="p-5 bg-indigo-900 rounded-lg text-center shadow-inner relative">
+                        <span class="block text-sm font-semibold text-indigo-200 mb-1">Prediksi Terjual (Y)</span>
+                        <div class="flex items-baseline justify-center gap-2">
+                            <span id="result1" class="text-5xl font-black text-white">90</span><span class="text-lg text-indigo-300 font-semibold">Sepatu</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Visualisasi Chart -->
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-full">
+                    <canvas id="playChart1"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Playground 2 (Multivariate) -->
+        <section class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-200">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="text-3xl">🎛️</span>
+                <h2 class="text-2xl font-bold text-blue-900">Playground 2: Regresi Multivariate</h2>
+            </div>
+            <p class="text-blue-700 mb-6 text-sm">Visualisasi <strong>Model 2</strong> (2 variabel: Iklan + Diskon). Karena kita tidak bisa menggambar grafik 3 Dimensi di kertas/layar biasa, cara terbaik memahami Multivariate adalah dengan melihat <strong>Komposisi Penjumlahan</strong> pada Bar Chart di bawah ini.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <!-- Kontrol -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <p class="text-xs px-2 py-1 bg-slate-100 rounded text-slate-600 mb-6 font-mono inline-block">Persamaan: Y = 10 + 5X₁ + 2X₂</p>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex justify-between">
+                            <span>Budget Iklan (X₁)</span>
+                            <span class="text-blue-600 font-bold"><span id="valAds2">10</span> Juta</span>
+                        </label>
+                        <input type="range" id="sliderAds2" min="0" max="20" step="1" value="10" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex justify-between">
+                            <span>Persentase Diskon (X₂)</span>
+                            <span class="text-amber-600 font-bold"><span id="valDisc">15</span> %</span>
+                        </label>
+                        <input type="range" id="sliderDisc" min="0" max="30" step="1" value="15" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                    </div>
+
+                    <div class="p-5 bg-blue-900 rounded-lg text-center shadow-inner relative">
+                        <span class="block text-sm font-semibold text-blue-200 mb-1">Total Prediksi Terjual (Y)</span>
+                        <div class="flex items-baseline justify-center gap-2">
+                            <span id="result2" class="text-5xl font-black text-white">90</span><span class="text-lg text-blue-300 font-semibold">Sepatu</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Visualisasi Stacked Bar -->
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 h-full flex flex-col justify-center">
+                    <h3 class="text-center font-semibold text-slate-700 text-sm mb-4">Komposisi Pembentuk Penjualan</h3>
+                    <canvas id="playChart2" height="200"></canvas>
+                    <p class="text-[11px] text-slate-500 mt-4 text-center leading-relaxed">
+                        <strong>Logika Multivariate:</strong> Hasil akhir bukanlah angka gaib, melainkan <strong>penjumlahan matematis murni</strong> dari Faktor Bawaan (Intercept/Base) + Dorongan Variabel 1 + Dorongan Variabel 2.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fakta Tajam & Saran (Critical Review) -->
+        <section class="bg-red-50 p-8 rounded-xl shadow-sm border border-red-200">
+            <h2 class="text-2xl font-bold text-red-800 mb-4">🔥 Fakta Tajam & Saran Kritis</h2>
+            <div class="space-y-4 text-red-900">
+                <p><strong>1. Korelasi BUKAN Kausalitas:</strong> Hanya karena data Iklan dan Penjualan naik bersamaan, bukan berarti Iklan PASTI penyebab penjualan. Bisa jadi musim liburan yang membuat orang beli, iklan hanya kebetulan jalan di waktu yang sama. Hati-hati mengambil kesimpulan bisnis.</p>
+                
+                <p><strong>2. Garbage In, Garbage Out (GIGO):</strong> Secanggih apa pun algoritma atau <em>tools</em> BI yang digunakan, jika data yang dimasukkan cacat (banyak <em>missing value</em>, data palsu), hasil regresinya adalah sampah. Fokus utama Anda harus ada di tahap <strong>Preprocessing Data</strong>, bukan sekadar gaya-gayaan bikin model rumit.</p>
+
+                <p><strong>3. Jangan Rakus Variabel (Overfitting):</strong> Jangan memasukkan 50 variabel penyebab di model Multivariate Anda hanya karena "bisa". Model Anda akan <em>overfitting</em> (sangat akurat di data masa lalu, tapi hancur total saat memprediksi masa depan). Gunakan hanya metrik yang masuk akal secara bisnis.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 text-slate-500 text-sm">
+        <p>&copy; 2026 Modul Business Intelligence - Prodi Bisnis Digital</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Data Bersih (Tahap 2)
+            const cleanedData = [
+                {x: 2, y: 34},
+                {x: 4, y: 48},
+                {x: 5, y: 50},
+                {x: 5, y: 55},
+                {x: 7, y: 69},
+                {x: 8, y: 76},
+                {x: 10, y: 90}
+            ];
+
+            // 1. Render EDA Chart (Tahap 3)
+            const ctxEda = document.getElementById('edaChart');
+            if (ctxEda) {
+                new Chart(ctxEda.getContext('2d'), {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Titik Data Historis',
+                            data: cleanedData,
+                            backgroundColor: 'rgba(99, 102, 241, 1)', // Indigo
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { title: { display: true, text: 'Budget Iklan (Juta)' }, min: 0, max: 12 },
+                            y: { title: { display: true, text: 'Sepatu Terjual' }, min: 0, max: 100 }
+                        }
+                    }
+                });
+            }
+
+            // 2. Render Playground 1 Chart (Simple Linear)
+            const ctxPlay1 = document.getElementById('playChart1');
+            let playChart1;
+            
+            // Titik awal dan akhir untuk menarik Garis Regresi imajiner (Y = 20 + 7X)
+            const regressionLine1 = [{x: 0, y: 20}, {x: 20, y: 160}];
+
+            if (ctxPlay1) {
+                playChart1 = new Chart(ctxPlay1.getContext('2d'), {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Data Asli',
+                                data: cleanedData,
+                                backgroundColor: 'rgba(148, 163, 184, 0.6)', 
+                                pointRadius: 5
+                            },
+                            {
+                                type: 'line',
+                                label: 'Garis Tren Model',
+                                data: regressionLine1,
+                                borderColor: 'rgba(99, 102, 241, 0.5)',
+                                borderDash: [5, 5],
+                                borderWidth: 2,
+                                fill: false,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'Titik Prediksi Live',
+                                data: [{x: 10, y: 90}], // Posisi default awal
+                                backgroundColor: 'rgba(239, 68, 68, 1)',
+                                borderColor: 'white',
+                                borderWidth: 2,
+                                pointRadius: 9,
+                                pointHoverRadius: 11
+                            }
+                        ]
+                    },
+                    options: {
+                        animation: { duration: 300, easing: 'easeOutQuart' },
+                        scales: {
+                            x: { title: { display: true, text: 'Budget Iklan' }, min: 0, max: 20 },
+                            y: { title: { display: true, text: 'Prediksi Terjual' }, min: 0, max: 180 }
+                        }
+                    }
+                });
+            }
+
+            // Logika Slider Playground 1
+            const sliderAds1 = document.getElementById('sliderAds1');
+            const valAds1 = document.getElementById('valAds1');
+            const result1 = document.getElementById('result1');
+
+            if(sliderAds1) {
+                sliderAds1.addEventListener('input', () => {
+                    const x = parseInt(sliderAds1.value);
+                    valAds1.textContent = x;
+                    const y = 20 + (7 * x); // Rumus Simple
+                    
+                    result1.style.transform = 'scale(1.15)';
+                    setTimeout(() => result1.style.transform = 'scale(1)', 150);
+                    result1.textContent = y;
+
+                    if(playChart1) {
+                        playChart1.data.datasets[2].data = [{x: x, y: y}];
+                        playChart1.update();
+                    }
+                });
+            }
+
+            // 3. Render Playground 2 Chart (Multivariate - Stacked Bar)
+            const ctxPlay2 = document.getElementById('playChart2');
+            let playChart2;
+
+            if (ctxPlay2) {
+                playChart2 = new Chart(ctxPlay2.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Komposisi Prediksi'], // 1 Bar saja (Horizontal/Vertical)
+                        datasets: [
+                            {
+                                label: 'Base/Organik (Konstan: 10)',
+                                data: [10],
+                                backgroundColor: 'rgba(148, 163, 184, 0.8)' // Slate
+                            },
+                            {
+                                label: 'Efek Iklan (5 × X₁)',
+                                data: [50], // Default 5 * 10
+                                backgroundColor: 'rgba(37, 99, 235, 0.8)' // Blue
+                            },
+                            {
+                                label: 'Efek Diskon (2 × X₂)',
+                                data: [30], // Default 2 * 15
+                                backgroundColor: 'rgba(245, 158, 11, 0.8)' // Amber
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y', // Buat bar horizontal agar mudah dibaca
+                        animation: { duration: 300, easing: 'easeOutQuart' },
+                        plugins: { tooltip: { mode: 'index', intersect: false } },
+                        scales: {
+                            x: { stacked: true, min: 0, max: 200, title: { display: true, text: 'Jumlah Sepatu Terjual' } },
+                            y: { stacked: true, display: false }
+                        }
+                    }
+                });
+            }
+
+            // Logika Slider Playground 2
+            const sliderAds2 = document.getElementById('sliderAds2');
+            const sliderDisc = document.getElementById('sliderDisc');
+            const valAds2 = document.getElementById('valAds2');
+            const valDisc = document.getElementById('valDisc');
+            const result2 = document.getElementById('result2');
+
+            function updateMultiSimulator() {
+                const x1 = parseInt(sliderAds2.value);
+                const x2 = parseInt(sliderDisc.value);
+                
+                valAds2.textContent = x1;
+                valDisc.textContent = x2;
+                
+                // Kalkulasi Prediksi Multivariate: Y = 10 + 5X1 + 2X2
+                const yBase = 10;
+                const yAds = 5 * x1;
+                const yDisc = 2 * x2;
+                const yTotal = yBase + yAds + yDisc;
+                
+                result2.style.transform = 'scale(1.15)';
+                setTimeout(() => result2.style.transform = 'scale(1)', 150);
+                result2.textContent = yTotal;
+
+                if(playChart2) {
+                    playChart2.data.datasets[1].data = [yAds];
+                    playChart2.data.datasets[2].data = [yDisc];
+                    playChart2.update();
+                }
+            }
+
+            if(sliderAds2 && sliderDisc) {
+                sliderAds2.addEventListener('input', updateMultiSimulator);
+                sliderDisc.addEventListener('input', updateMultiSimulator);
+            }
+        });
+    </script>
+</body>
+</html>
