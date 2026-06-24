@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Akhir BI - Kelompok 1</title>
     <style>
+        /* Mengunci Font Times New Roman Secara Global */
         * {
             font-family: 'Times New Roman', Times, serif !important;
         }
-        
+
+        /* Gaya Dasar */
         body {
             line-height: 1.5;
             color: #000;
@@ -17,10 +19,11 @@
             padding: 20px 0;
         }
 
+        /* Lembar A4 Tampilan Layar */
         .page {
             width: 21cm;
             min-height: 29.7cm;
-            padding: 2.54cm 2.54cm 3cm 2.54cm; /* Margin bawah dilebarkan untuk nomor halaman */
+            padding: 3cm 2.54cm 3cm 2.54cm;
             margin: 0 auto 20px auto;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -29,7 +32,7 @@
             position: relative;
         }
 
-        /* Nomor Halaman */
+        /* Penomoran Halaman Akademis */
         .page-number-bottom {
             position: absolute;
             bottom: 1.5cm;
@@ -46,6 +49,7 @@
             font-size: 11pt;
         }
 
+        /* Tipografi */
         h1, h2, h3 {
             color: #000;
         }
@@ -72,6 +76,7 @@
             margin-bottom: 8px;
         }
 
+        /* Halaman Sampul */
         .cover {
             text-align: center;
             display: flex;
@@ -79,14 +84,13 @@
             justify-content: center;
             align-items: center;
             min-height: 29.7cm;
-            padding-bottom: 2.54cm; /* Reset padding bawah sampul */
+            padding-bottom: 2.54cm;
         }
-        .inverted-triangle {
+        .cover h1 {
+            font-size: 14pt;
             line-height: 1.5;
             margin-bottom: 40px;
-            font-size: 14pt;
         }
-        
         .cover img {
             width: 200px;
             margin: 40px 0;
@@ -99,11 +103,12 @@
             text-transform: uppercase;
         }
 
+        /* Tabel & Gambar */
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 10px 0;
-            font-size: 11pt;
+            font-size: 10pt;
         }
         th, td {
             border: 1px solid #000;
@@ -120,20 +125,14 @@
             margin-top: 5px;
             margin-bottom: 20px;
         }
-        
-        .bibliography {
-            list-style-type: none; /* Menghilangkan dot/angka bawaan */
-            padding-left: 0;
-            margin: 0;
-        }
-        .bibliography li {
-            text-align: justify;
-            margin-bottom: 12px;
-            padding-left: 30px;
-            text-indent: -30px; /* Hanging indent untuk IEEE */
-            font-size: 12pt;
+        .chart-img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            margin-top: 15px;
         }
         
+        /* Daftar Isi / Tabel / Gambar */
         .toc-list {
             padding: 0;
             list-style: none;
@@ -153,6 +152,16 @@
             top: -2px;
         }
 
+        /* IEEE Daftar Pustaka */
+        .bib-item {
+            padding-left: 30px;
+            text-indent: -30px;
+            margin-bottom: 12px;
+            text-align: justify;
+            font-size: 12pt;
+        }
+
+        /* Daftar Riwayat Hidup (CV Layout) */
         .cv-wrapper {
             display: flex;
             flex-direction: column;
@@ -191,6 +200,7 @@
             padding-left: 20px;
         }
 
+        /* Tombol Cetak */
         .print-btn {
             display: block;
             width: 200px;
@@ -201,7 +211,7 @@
             text-align: center;
             text-decoration: none;
             font-weight: bold;
-            font-family: Arial, sans-serif !important; /* Khusus tombol */
+            font-family: Arial, sans-serif !important;
             border-radius: 5px;
             cursor: pointer;
             border: none;
@@ -210,6 +220,7 @@
             background-color: #004494;
         }
 
+        /* Pengaturan Cetak (PDF) */
         @page {
             size: A4;
             margin: 0;
@@ -225,7 +236,7 @@
                 width: 21cm;
                 min-height: 29.7cm;
                 margin: 0;
-                padding: 2.54cm 2.54cm 3cm 2.54cm;
+                padding: 3cm 2.54cm 3cm 2.54cm;
                 box-shadow: none;
                 border: none;
                 page-break-after: always;
@@ -246,7 +257,7 @@
 
     <!-- 1. HALAMAN SAMPUL (Nomor halaman disembunyikan) -->
     <div class="page cover">
-        <h1 class="inverted-triangle">
+        <h1>
             LAPORAN AKHIR MATA KULIAH <i>BUSINESS INTELLIGENCE</i><br>
             ANALISIS PMB MAHASISWA NUSA MANDIRI
         </h1>
@@ -272,6 +283,7 @@
         </div>
     </div>
 
+    <!-- 2. KATA PENGANTAR -->
     <div class="page">
         <h1>KATA PENGANTAR</h1>
         <p>Puji syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas segala rahmat dan petunjuk-Nya, sehingga penyusunan Laporan Akhir Mata Kuliah <i>Business Intelligence</i> yang berjudul <b>"Analisis PMB Mahasiswa Nusa Mandiri"</b> dapat diselesaikan tepat pada waktunya.</p>
@@ -283,9 +295,11 @@
         <br><br>
         <p style="text-align: right;"><b>Kelompok 1</b></p>
         
+        <!-- Nomor halaman di tengah bawah karena ini awal bab -->
         <div class="page-number-bottom">ii</div>
     </div>
 
+    <!-- 3. DAFTAR ISI -->
     <div class="page">
         <h1>DAFTAR ISI</h1>
         <div class="toc-list">
@@ -308,44 +322,48 @@
             <br>
             <div class="toc-item"><b>BAB III PEMBAHASAN</b><span class="toc-dots"></span><b>4</b></div>
             <div class="toc-item" style="padding-left: 20px;"><span>3.1 Deskripsi dan Karakteristik Dataset</span><span class="toc-dots"></span><span>4</span></div>
-            <div class="toc-item" style="padding-left: 20px;"><span>3.2 Analisis Visualisasi <i>Business Intelligence</i></span><span class="toc-dots"></span><span>5</span></div>
-            <div class="toc-item" style="padding-left: 20px;"><span>3.3 Identifikasi Masalah dan Peluang Bisnis</span><span class="toc-dots"></span><span>6</span></div>
+            <div class="toc-item" style="padding-left: 20px;"><span>3.2 Pra-pemrosesan Data (<i>Data Preprocessing</i>)</span><span class="toc-dots"></span><span>4</span></div>
+            <div class="toc-item" style="padding-left: 20px;"><span>3.3 Analisis Visualisasi <i>Business Intelligence</i></span><span class="toc-dots"></span><span>5</span></div>
+            <div class="toc-item" style="padding-left: 20px;"><span>3.4 Identifikasi Masalah dan Peluang Bisnis</span><span class="toc-dots"></span><span>7</span></div>
             <br>
-            <div class="toc-item"><b>BAB IV KESIMPULAN DAN SARAN</b><span class="toc-dots"></span><b>7</b></div>
-            <div class="toc-item" style="padding-left: 20px;"><span>4.1 Kesimpulan</span><span class="toc-dots"></span><span>7</span></div>
-            <div class="toc-item" style="padding-left: 20px;"><span>4.2 Saran (Rekomendasi Strategis)</span><span class="toc-dots"></span><span>7</span></div>
+            <div class="toc-item"><b>BAB IV KESIMPULAN DAN SARAN</b><span class="toc-dots"></span><b>8</b></div>
+            <div class="toc-item" style="padding-left: 20px;"><span>4.1 Kesimpulan</span><span class="toc-dots"></span><span>8</span></div>
+            <div class="toc-item" style="padding-left: 20px;"><span>4.2 Saran (Rekomendasi Strategis)</span><span class="toc-dots"></span><span>8</span></div>
             <br>
-            <div class="toc-item"><b>DAFTAR PUSTAKA</b><span class="toc-dots"></span><b>8</b></div>
-            <div class="toc-item"><b>DAFTAR RIWAYAT HIDUP ANGGOTA</b><span class="toc-dots"></span><b>9</b></div>
+            <div class="toc-item"><b>DAFTAR PUSTAKA</b><span class="toc-dots"></span><b>9</b></div>
+            <div class="toc-item"><b>DAFTAR RIWAYAT HIDUP ANGGOTA</b><span class="toc-dots"></span><b>10</b></div>
         </div>
+        
         <div class="page-number-bottom">iii</div>
     </div>
 
+    <!-- 4. DAFTAR GAMBAR -->
     <div class="page">
         <h1>DAFTAR GAMBAR</h1>
         <div class="toc-list">
-            <div class="toc-item"><span>Gambar 3.1 Cuplikan Pratinjau Dataset PMB Nusa Mandiri</span><span class="toc-dots"></span><span>5</span></div>
-            <div class="toc-item"><span>Gambar 3.2 Tampilan Dasbor Ringkasan Kualitas Data</span><span class="toc-dots"></span><span>6</span></div>
-            <div class="toc-item"><span>Gambar 3.3 Grafik Jumlah Pendaftar per Program Studi</span><span class="toc-dots"></span><span>5</span></div>
-            <div class="toc-item"><span>Gambar 3.4 Grafik Distribusi Status Penerimaan</span><span class="toc-dots"></span><span>5</span></div>
-            <div class="toc-item"><span>Gambar 3.5 Grafik Rata-rata Biaya Daftar per Program Studi</span><span class="toc-dots"></span><span>6</span></div>
-            <div class="toc-item"><span>Gambar 3.6 Grafik Tren Jumlah Pendaftar per Tanggal</span><span class="toc-dots"></span><span>6</span></div>
-            <div class="toc-item"><span>Gambar 3.7 Grafik Proporsi Metode Pembayaran</span><span class="toc-dots"></span><span>6</span></div>
-            <div class="toc-item"><span>Gambar 3.8 Grafik Rata-rata Usia per Program Studi</span><span class="toc-dots"></span><span>5</span></div>
+            <div class="toc-item"><span>Gambar 3.1 Jumlah Pendaftar per Program Studi</span><span class="toc-dots"></span><span>5</span></div>
+            <div class="toc-item"><span>Gambar 3.2 Rata-rata Usia per Program Studi</span><span class="toc-dots"></span><span>5</span></div>
+            <div class="toc-item"><span>Gambar 3.3 Distribusi Status Penerimaan</span><span class="toc-dots"></span><span>6</span></div>
+            <div class="toc-item"><span>Gambar 3.4 Rata-rata Biaya Daftar per Program Studi</span><span class="toc-dots"></span><span>6</span></div>
+            <div class="toc-item"><span>Gambar 3.5 Proporsi Metode Pembayaran</span><span class="toc-dots"></span><span>6</span></div>
+            <div class="toc-item"><span>Gambar 3.6 Tren Jumlah Pendaftar per Tanggal</span><span class="toc-dots"></span><span>7</span></div>
         </div>
+        
         <div class="page-number-bottom">iv</div>
     </div>
 
+    <!-- 5. DAFTAR TABEL -->
     <div class="page">
         <h1>DAFTAR TABEL</h1>
         <div class="toc-list">
-            <div class="toc-item"><span>Tabel 3.1 Metadata dan Penjelasan Atribut Dataset PMB</span><span class="toc-dots"></span><span>4</span></div>
-            <div class="toc-item"><span>Tabel 3.2 Sebaran Status Kelulusan Pendaftar</span><span class="toc-dots"></span><span>5</span></div>
-            <div class="toc-item"><span>Tabel 3.3 Matriks Identifikasi Masalah dan Peluang Bisnis</span><span class="toc-dots"></span><span>6</span></div>
+            <div class="toc-item"><span>Tabel 3.1 Cuplikan 10 Baris Pertama Dataset Excel PMB Nusa Mandiri</span><span class="toc-dots"></span><span>4</span></div>
+            <div class="toc-item"><span>Tabel 3.2 Matriks Identifikasi Masalah dan Peluang Bisnis</span><span class="toc-dots"></span><span>7</span></div>
         </div>
+        
         <div class="page-number-bottom">v</div>
     </div>
 
+    <!-- BAB I (Halaman 1) -->
     <div class="page">
         <h1>BAB I<br>PENDAHULUAN</h1>
         
@@ -364,7 +382,10 @@
         <div class="page-number-bottom">1</div>
     </div>
 
+    <!-- BAB I Lanjutan (Halaman 2) -->
     <div class="page">
+        <div class="page-number-top-right">2</div>
+
         <h2>1.3 Tujuan Penelitian</h2>
         <ol>
             <li>Menganalisis struktur, dimensi, dan persentase kebersihan data (<i>data quality</i>) dari arsip PMB Mahasiswa Nusa Mandiri.</li>
@@ -378,10 +399,9 @@
             <li><b>Bagi Program Studi / Akademis:</b> Memperkaya rujukan kajian terapan mengenai pemanfaatan algoritma <i>data cleansing</i> dan arsitektur BI pada entitas perguruan tinggi.</li>
             <li><b>Bagi Manajemen Universitas Nusa Mandiri:</b> Menjadi rujukan cetak biru (<i>blueprint</i>) bagi pimpinan dalam mengambil kebijakan penyesuaian harga formulir, pembenahan basis data web pendaftaran, serta pengalokasian dana promosi program studi agar lebih tepat sasaran.</li>
         </ol>
-        
-        <div class="page-number-top-right">2</div>
     </div>
 
+    <!-- BAB II (Halaman 3) -->
     <div class="page">
         <h1>BAB II<br>LANDASAN TEORI</h1>
         
@@ -397,190 +417,189 @@
         <div class="page-number-bottom">3</div>
     </div>
 
+    <!-- BAB III (Halaman 4) -->
     <div class="page">
         <h1>BAB III<br>PEMBAHASAN</h1>
         
         <h2>3.1 Deskripsi dan Karakteristik Dataset</h2>
-        <p>Penelitian ini membedah himpunan data sekunder dengan nama arsip <b>PMB Mahasiswa Nusa Mandiri</b>. Berdasarkan hasil sinkronisasi pada ruang kerja analitik, dataset ini memperlihatkan karakteristik dimensional sebagai berikut:</p>
-        <ol type="a">
-            <li><b>Total Rekaman Data:</b> Berjumlah 40 baris rekaman entitas pendaftar.</li>
-            <li><b>Jumlah Kolom Atribut:</b> Terdiri atas 13 kolom parameter pencatatan.</li>
-            <li><b>Tingkat Kualitas Data:</b> Terekam memiliki kualitas sempurna sebesar 100.0% dengan indikator 0 nilai kosong (<i>null values</i>).</li>
-        </ol>
-        <p>Rincian struktural dan tipe data dari ketiga belas atribut tersebut disusun pada Tabel 3.1 di bawah ini:</p>
+        <p>Dataset yang diolah dalam penelitian ini bernama <b>PMB Mahasiswa Nusa Mandiri</b>. Himpunan ini berisi data pendaftaran mahasiswa baru sebanyak 40 baris rekaman dengan 13 kolom atribut. Data mencakup informasi pribadi mahasiswa (seperti nama, asal kota, usia), serta rincian pendaftaran (seperti tanggal daftar, program studi, biaya daftar, jumlah pembayaran, nilai ujian, tingkat kepuasan, metode bayar, dan status penerimaan). Tujuan utama penyediaan dataset ini adalah untuk memetakan profil pendaftar, meninjau alur pendaftaran, serta mengevaluasi kualitas hasil seleksi.</p>
+        <p>Guna memberikan gambaran nyata terkait kelengkapan masukan (<i>input</i>), Tabel 3.1 menyajikan cuplikan langsung dari 10 baris pertama berkas hamparan (<i>spreadsheet</i>) yang digunakan dalam penelitian ini.</p>
 
-        <table>
-            <caption><b>Tabel 3.1</b> Metadata dan Penjelasan Atribut Dataset PMB</caption>
+        <table style="font-size: 8.5pt;">
+            <caption><b>Tabel 3.1</b> Cuplikan 10 Baris Pertama Dataset Excel PMB Nusa Mandiri</caption>
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Nama Kolom</th>
-                    <th>Tipe Data</th>
-                    <th>Representasi Informasi Pencatatan</th>
+                    <th>no</th><th>id_mahasiswa</th><th>nama_lengkap</th><th>tanggal_daftar</th><th>program_studi</th><th>kota_asal</th><th>biaya_daftar</th><th>jumlah_pembayaran</th>
                 </tr>
             </thead>
             <tbody>
-                <tr><td>1</td><td><code>no</code></td><td>Text</td><td>Nomor penanda urutan baris data</td></tr>
-                <tr><td>2</td><td><code>id_mahasiswa</code></td><td>Text</td><td>Identitas kode unik pendaftar (contoh: PMB001)</td></tr>
-                <tr><td>3</td><td><code>nama_lengkap</code></td><td>Text</td><td>Nama lengkap calon mahasiswa baru</td></tr>
-                <tr><td>4</td><td><code>tanggal_daftar</code></td><td>Text</td><td>Waktu rekam pencatatan pendaftaran dilakukan</td></tr>
-                <tr><td>5</td><td><code>program_studi</code></td><td>Text</td><td>Program studi yang dituju (Teknik Informatika, dll.)</td></tr>
-                <tr><td>6</td><td><code>kota_asal</code></td><td>Text</td><td>Kota atau wilayah asal domisili pendaftar</td></tr>
-                <tr><td>7</td><td><code>biaya_daftar</code></td><td>Text</td><td>Tarif pendaftaran yang dibebankan</td></tr>
-                <tr><td>8</td><td><code>jumlah_pembayaran</code></td><td>Text</td><td>Total nominal uang yang telah disetorkan</td></tr>
-                <tr><td>9</td><td><code>usia</code></td><td>Text</td><td>Umur calon mahasiswa pada saat mendaftar</td></tr>
-                <tr><td>10</td><td><code>nilai_ujian</code></td><td>Text</td><td>Skor capaian tes saringan masuk</td></tr>
-                <tr><td>11</td><td><code>tingkat_kepuasan</code></td><td>Text</td><td>Parameter kepuasan layanan (Tinggi, Sedang, Rendah)</td></tr>
-                <tr><td>12</td><td><code>metode_bayar</code></td><td>Text</td><td>Saluran transaksi (Transfer Bank, Tunai, QRIS)</td></tr>
-                <tr><td>13</td><td><code>status_penerimaan</code></td><td>Text</td><td>Keputusan akhir saringan masuk (Diterima/Tidak)</td></tr>
+                <tr><td>1</td><td>PMB001</td><td>Andi Pratama</td><td>2026-01-01</td><td>Teknik Informatika</td><td>Jakarta</td><td>300000</td><td>300000</td></tr>
+                <tr><td>2</td><td>PMB002</td><td>Budi Santoso</td><td>01/02/26</td><td>Sistem Informasi</td><td>JKT</td><td>250000</td><td>250000</td></tr>
+                <tr><td>3</td><td>PMB003</td><td>Citra Dewi</td><td>Jan 3rd 2026</td><td>Manajemen Informatika</td><td>jakarta</td><td>200000</td><td>200000</td></tr>
+                <tr><td>4</td><td>PMB004</td><td>Dedi Kusuma</td><td>2026-01-04</td><td>Teknik Komputer</td><td>Bekasi</td><td>350000</td><td>350000</td></tr>
+                <tr><td>5</td><td>PMB005</td><td>Eka Putri</td><td>05/01/26</td><td>Sistem Informasi</td><td>Depok</td><td>250000</td><td>250000</td></tr>
+                <tr><td>6</td><td>PMB006</td><td>Fajar Hidayat</td><td>2026-01-06</td><td>Teknik Informatika</td><td>Jakarta</td><td>300000</td><td>300000</td></tr>
+                <tr><td>7</td><td>PMB007</td><td>Gita Sari</td><td>Jan 7th 2026</td><td>Manajemen Informatika</td><td>Bogor</td><td>200000</td><td>200000</td></tr>
+                <tr><td>8</td><td>PMB008</td><td>Hendra Gunawan</td><td>2026-01-08</td><td>Teknik Komputer</td><td>Tangerang</td><td>350000</td><td>350000</td></tr>
+                <tr><td>9</td><td>PMB009</td><td>Indah Permatasari</td><td>09/01/26</td><td>Sistem Informasi</td><td>Bekasi</td><td>250000</td><td>250000</td></tr>
+                <tr><td>10</td><td>PMB010</td><td>Joko Widodo</td><td>2026-01-10</td><td>Teknik Informatika</td><td>Jakarta</td><td>300000</td><td>300000</td></tr>
             </tbody>
         </table>
-        <div class="source-caption">Sumber: Pengolahan Data Mandiri (2026)</div>
-        
+        <div class="source-caption">Sumber: Berkas PMB Mahasiswa Nusa Mandiri.xlsx (2026)</div>
+
+        <h2>3.2 Pra-pemrosesan Data (Data Preprocessing)</h2>
+        <p>Sebelum dieksekusi menjadi visualisasi, evaluasi kualitas data menunjukkan sisi positif di mana <b>tidak ada nilai yang kosong (0 <i>null values</i>)</b> pada seluruh sel. Akan tetapi, masalah kualitas data yang cukup mencolok ditemukan pada inkonsistensi pengetikan. Sebagai contoh, pada kolom <code>kota_asal</code>, sistem mencatat keragaman format untuk wilayah yang sama (misalnya: "Jakarta", " JKT ", dan "jakarta"). Demikian pula pada kolom <code>tanggal_daftar</code>, format waktu bercampur aduk antara "2026-01-01", "01/02/26", hingga "Jan 3rd 2026". Ketidakteraturan ini dapat menyesatkan mesin BI dalam membaca agregasi wilayah maupun sumbu kronologis, sehingga mutlak memerlukan tahapan standardisasi teks (*data cleansing*) sebelum analisis direalisasikan.</p>
+
         <div class="page-number-bottom">4</div>
     </div>
 
+    <!-- BAB III Lanjutan (Halaman 5) -->
     <div class="page">
-        <h2>3.2 Analisis Visualisasi Business Intelligence</h2>
-        <p>Berdasarkan ekstraksi grafik yang diproses oleh dasbor BI (<i>Analytics Report</i>), diperoleh 4 poin temuan strategis:</p>
-
-        <p><b>1. Dominasi Program Studi dan Profil Pendaftar</b><br>
-        Pilihan program studi menunjukkan kesenjangan popularitas yang sangat ekstrem. Program studi <b>Teknik Informatika</b> tampil sebagai primadona dengan jumlah pendaftar tertinggi. Lonjakan minat ini memiliki korelasi linier dengan faktor kematangan usia, di mana rata-rata pendaftar Teknik Informatika berumur 21,5 tahun. Sebaliknya, program studi <b>Manajemen Informatika</b> diisi oleh pendaftar dengan rata-rata usia termuda di angka 20 tahun.</p>
-
-        <img src="{4E268AE4-5F43-4410-A411-601E23CF73CA}.png" alt="Gambar Pratinjau Data" style="width: 100%; border: 1px solid #ccc; margin-top: 10px;">
-        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.1 Cuplikan Pratinjau Dataset PMB Nusa Mandiri</p>
-        <div class="source-caption">Sumber: Digibiz Pro BI Hub Analytics (2026)</div>
-
-        <p><b>2. Tingkat Penerimaan dan Kualitas Pendaftar</b><br>
-        Secara kuantitas keseluruhan, proses seleksi memperlihatkan tingkat penerimaan yang sangat inklusif.</p>
-        
-        <table>
-            <caption><b>Tabel 3.2</b> Sebaran Status Kelulusan Pendaftar</caption>
-            <thead>
-                <tr>
-                    <th>Status Kelulusan</th>
-                    <th>Jumlah Pendaftar</th>
-                    <th>Persentase</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Diterima</td><td>31 orang</td><td>77,5%</td></tr>
-                <tr><td>Tidak Diterima</td><td>9 orang</td><td>22,5%</td></tr>
-                <tr><td><b>Total</b></td><td><b>40 orang</b></td><td><b>100%</b></td></tr>
-            </tbody>
-        </table>
-        <div class="source-caption">Sumber: Pengolahan Data Mandiri (2026)</div>
-        
-        <p>Namun, pemfilteran kualitas memperlihatkan aturan mutlak: 100% pendaftar yang memiliki tingkat kepuasan "Tinggi" dengan perolehan nilai ujian di atas 80 selalu berhasil diterima. Sebaliknya, seluruh pendaftar yang melaporkan tingkat kepuasan "Rendah" (skor nilai ujian di bawah 75) dan berasal dari program studi <b>Sistem Informasi</b> dipastikan tidak diterima.</p>
-        
         <div class="page-number-top-right">5</div>
+
+        <h2>3.3 Analisis Visualisasi Business Intelligence</h2>
+        <p>Setelah tahapan agregasi mesin selesai dilakukan, dasbor intelijen berhasil membongkar temuan yang cukup bervariasi. Berdasarkan ekstraksi visualisasi, analisis strategis dapat dijabarkan ke dalam beberapa temuan kunci berikut:</p>
+
+        <p><b>1. Dominasi Program Studi dan Rentang Usia</b><br>
+        Universitas mengusung 4 program studi yang ditawarkan, namun ketertarikan pasar tidak terdistribusi secara merata. Teknik Informatika dan Sistem Informasi tampil mendominasi sebagai pilihan yang paling umum diambil oleh aplikan. Apabila disandingkan dengan profil pendaftar, usia mereka berkisar pada usia produktif antara 19 hingga 23 tahun.</p>
+
+        <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Jumlah%20Pendaftar%20per%20Program%20Studi.png" alt="Grafik Jumlah Pendaftar" class="chart-img">
+        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.1 Jumlah Pendaftar per Program Studi</p>
+        <div class="source-caption">Sumber: Pengolahan BI Mandiri (2026)</div>
+
+        <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Rata-rata%20Usia%20per%20Program%20Studi.png" alt="Grafik Rata-rata Usia" class="chart-img">
+        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.2 Rata-rata Usia per Program Studi</p>
+        <div class="source-caption">Sumber: Pengolahan BI Mandiri (2026)</div>
     </div>
 
+    <!-- BAB III Lanjutan (Halaman 6) -->
     <div class="page">
-        <p><b>3. Biaya dan Metode Pembayaran</b><br>
-        Struktur harga pendaftaran menunjukkan ketidakseimbangan penetapan tarif. Program studi <b>Teknik Komputer</b> mematok biaya daftar paling mahal sebesar <b>Rp 350.000</b>, sementara <b>Manajemen Informatika</b> mematok biaya paling murah sebesar <b>Rp 200.000</b>. Instrumen pembayaran terbagi secara merata, yaitu melalui Transfer Bank (14 transaksi), Tunai (14 transaksi), dan QRIS (12 transaksi).</p>
+        <div class="page-number-top-right">6</div>
 
-        <p><b>4. Tren Pendaftaran dan Deteksi Anomali Kualitas Data</b><br>
-        Temuan paling fatal dari pelaporan BI ini terletak pada kualitas data di atribut <code>kota_asal</code>. Pada entri aslinya ditemukan berbagai variasi ketidakkonsistenan penulisan teks untuk satu kota yang sama, seperti entri teks "Jakarta", " JKT ", "jakarta", hingga " jkt ". Keragaman penulisan yang tidak terstandarisasi ini membuat sistem gagal menjalankan fungsi agregasi geografis secara akurat.</p>
+        <p><b>2. Kualitas Seleksi Berdasarkan Nilai dan Status Penerimaan</b><br>
+        Dari sisi kemampuan akademis, nilai ujian saringan masuk bervariasi lebar dari 75 hingga 90 poin. Hal ini linear dengan tingkat kepuasan yang didominasi oleh kategori "Tinggi" dan "Sedang". Menggali lebih dalam rasio kelulusannya, grafik proporsi memperlihatkan persentase status pelamar yang sangat memihak pada golongan pelamar yang diterima.</p>
 
-        <img src="screencapture-digibiz-my-id-2026-06-24-17_21_39.jpg" alt="Gambar Dasbor BI" style="width: 100%; border: 1px solid #ccc; margin-top: 10px;">
-        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.2 Tampilan Dasbor Ringkasan Kualitas Data</p>
-        <div class="source-caption">Sumber: Digibiz Pro BI Hub Analytics (2026)</div>
+        <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Distribusi%20Status%20Penerimaan.png" alt="Grafik Status Penerimaan" class="chart-img">
+        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.3 Distribusi Status Penerimaan</p>
+        <div class="source-caption">Sumber: Pengolahan BI Mandiri (2026)</div>
 
-        <h2>3.3 Identifikasi Masalah dan Peluang Bisnis</h2>
-        <p>Hasil pemetaan kelemahan sistem dari data di atas diekstraksi ke dalam matriks Tabel 3.3 berikut:</p>
+        <p><b>3. Kebijakan Biaya dan Pola Transaksi</b><br>
+        Analisis harga mengungkapkan bahwa kolom <code>biaya_daftar</code> dan <code>jumlah_pembayaran</code> bernilai konstan sama. Secara komparasi fakultas, prodi Teknik Komputer membebankan tarif tertinggi, bertolak belakang dengan Manajemen Informatika. Adapun pelunasan tagihan paling banyak diselesaikan nasabah menggunakan jalur Transfer Bank.</p>
+
+        <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Rata-rata%20Biaya%20Daftar%20per%20Program%20Studi.png" alt="Grafik Biaya Daftar" class="chart-img" style="max-height: 200px;">
+        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.4 Rata-rata Biaya Daftar per Program Studi</p>
+        <div class="source-caption">Sumber: Pengolahan BI Mandiri (2026)</div>
+
+        <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Proporsi%20Metode%20Pembayaran.png" alt="Grafik Metode Pembayaran" class="chart-img" style="max-height: 200px;">
+        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.5 Proporsi Metode Pembayaran</p>
+        <div class="source-caption">Sumber: Pengolahan BI Mandiri (2026)</div>
+    </div>
+
+    <!-- BAB III Lanjutan (Halaman 7) -->
+    <div class="page">
+        <div class="page-number-top-right">7</div>
+
+        <p><b>4. Analisis Tren Waktu Pendaftaran</b><br>
+        Pola akuisisi pendaftar mencatatkan retensi garis lurus yang statis sepanjang pertengahan Januari, namun kemudian terjun bebas mengalami anjlok drastis ke dasar saat mendekati periode penghujung bulan (tanggal 15 Januari).</p>
+
+        <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Tren%20Jumlah%20Pendaftar%20per%20Tanggal.png" alt="Grafik Tren Waktu" class="chart-img">
+        <p style="text-align: center; font-size: 10pt; font-weight: bold; margin-bottom: 5px;">Gambar 3.6 Tren Jumlah Pendaftar per Tanggal</p>
+        <div class="source-caption">Sumber: Pengolahan BI Mandiri (2026)</div>
+
+        <h2>3.4 Identifikasi Masalah dan Peluang Bisnis</h2>
+        <p>Merujuk pada paparan di atas, rancangan rekomendasi analitik tingkat lanjut dapat difokuskan pada pengujian hipotesis, segmentasi terarah berdasarkan wilayah geografis (jika data kota telah dirapikan), serta korelasi metode pembayaran terhadap kelulusan. Ringkasan kelemahan dan peluang tersebut dituang pada Tabel 3.2 berikut:</p>
 
         <table>
-            <caption><b>Tabel 3.3</b> Matriks Identifikasi Masalah dan Peluang Bisnis</caption>
+            <caption><b>Tabel 3.2</b> Matriks Identifikasi Masalah dan Peluang Bisnis</caption>
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Parameter Fokus</th>
                     <th>Masalah Kritis Teridentifikasi</th>
-                    <th>Peluang Strategis yang Dapat Diambil</th>
+                    <th>Peluang Strategis (<i>Actionable Insight</i>)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>1</td>
                     <td><b>Kesenjangan Prodi</b></td>
-                    <td>Teknik Informatika mengalami banjir peminat, sementara Sistem Informasi dan Manajemen Informatika tertinggal jauh.</td>
-                    <td>Melakukan <i>repositioning</i> atau membangun diferensiasi nilai jual yang jauh lebih spesifik.</td>
+                    <td>Teknik Informatika terlalu padat, sementara prodi lainnya kurang terekspos.</td>
+                    <td>Fokuskan analisis mencari hubungan spesifik antara prodi dan kepuasan layanan guna diferensiasi.</td>
                 </tr>
                 <tr>
                     <td>2</td>
-                    <td><b>Tingkat Gagal Tinggi</b></td>
-                    <td>Angka ketidaklulusan terpusat secara tajam pada prodi Sistem Informasi bagi pendaftar bernilai di bawah 75.</td>
-                    <td>Merevisi strategi pemasaran guna menyaring pendaftar yang lebih berkualitas, atau menyesuaikan standar seleksi.</td>
+                    <td><b>Validasi Finansial</b></td>
+                    <td>Biaya daftar dan jumlah bayar selalu identik 100%.</td>
+                    <td>Lakukan investigasi apakah ini kebetulan atau murni merupakan duplikasi rekam jejak (*data error*).</td>
                 </tr>
                 <tr>
                     <td>3</td>
-                    <td><b>Kualitas Data Buruk</b></td>
-                    <td>Inkonsistensi format penulisan pada teks <code>kota_asal</code> merusak fungsi analisis peta demografis.</td>
-                    <td>Menerapkan fitur validasi data otomatis pada formulir pendaftaran daring guna memastikan kebersihan data dari hulu.</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td><b>Optimalisasi Harga</b></td>
-                    <td>Teknik Komputer membebankan tarif tertinggi namun gagal menarik minat pendaftar secara masif.</td>
-                    <td>Menurunkan tarif pendaftaran atau memberikan stimulus berupa beasiswa parsial saat mendaftar.</td>
+                    <td><b>Kualitas Teks Geografis</b></td>
+                    <td>Inkonsistensi format kota asal ("Jakarta", " JKT ").</td>
+                    <td>Segera terapkan pembersihan (<i>data cleansing</i>) untuk mengekstrak peta penyumbang pendaftar terbesar.</td>
                 </tr>
             </tbody>
         </table>
         <div class="source-caption">Sumber: Pengolahan Data Mandiri (2026)</div>
-        
-        <div class="page-number-top-right">6</div>
     </div>
 
+    <!-- BAB IV (Halaman 8) -->
     <div class="page">
         <h1>BAB IV<br>KESIMPULAN DAN SARAN</h1>
         
         <h2>4.1 Kesimpulan</h2>
         <p>Berdasarkan pemrosesan analitik yang telah diselesaikan, Kelompok 1 menyimpulkan empat poin utama:</p>
         <ol>
-            <li>Performa saringan masuk Universitas Nusa Mandiri berjalan dengan tingkat inklusivitas yang sangat tinggi, dibuktikan oleh rasio kelulusan pendaftar yang menyentuh angka 77,5%.</li>
-            <li>Terjadi ketimpangan daya tarik antar program studi yang sangat ekstrem, di mana Teknik Informatika mendominasi ketertarikan pasar, sementara Sistem Informasi mencatatkan tingkat kegagalan aplikan yang sangat mengkhawatirkan.</li>
-            <li>Integritas data pada atribut <code>kota_asal</code> terbukti sangat buruk akibat ketiadaan pembatasan format teks masukan manual.</li>
-            <li>Strategi penetapan harga formulir pendaftaran pada prodi Teknik Komputer (Rp 350.000) terbukti tidak rasional dan gagal mendorong pertumbuhan volume peminat secara signifikan.</li>
+            <li>Tingkat saringan masuk (seleksi) Universitas Nusa Mandiri berjalan sangat longgar dan memihak pada kuantitas, dibuktikan oleh persentase status pendaftar yang mendominasi di wilayah "Diterima".</li>
+            <li>Terdapat dominasi tunggal pada pilihan program studi di mana mayoritas demografi pendaftar yang berusia 19-23 tahun lebih cenderung memilih rumpun keilmuan Teknik Informatika maupun Sistem Informasi.</li>
+            <li>Struktur integritas data yang dihimpun masih belum matang. Hal ini tercermin nyata pada keberantakan format penanggalan (<i>datetime</i>) dan penulisan lokasi wilayah domisili (<code>kota_asal</code>).</li>
+            <li>Universitas telah mengandalkan infrastruktur keuangan yang fleksibel dengan menyajikan saluran penyetoran beragam (Transfer Bank, QRIS, dan Tunai).</li>
         </ol>
 
         <h2>4.2 Saran (Rekomendasi Strategis)</h2>
-        <p>Sebagai tim analis dan konsultan bisnis, kami merekomendasikan empat langkah taktis untuk segera dieksekusi oleh manajemen Universitas Nusa Mandiri:</p>
+        <p>Sebagai tim analis dan konsultan bisnis, kami merekomendasikan tiga langkah taktis perbaikan operasional kepada manajemen universitas:</p>
         <ol>
-            <li><b>Lakukan Standardisasi Data Master (<i>Data Cleansing</i>) Secara Segera</b><br>
-            Mengubah kolom isian teks bebas pada formulir pendaftaran daring menjadi menu <i>drop-down list</i> baku untuk atribut wilayah, serta melakukan pembersihan ulang terhadap 40 baris data historis yang telah masuk.</li>
+            <li><b>Penyeragaman Basis Data (<i>Data Governance</i>)</b><br>
+            Segera rombak antarmuka formulir situs pendaftaran. Ubah kotak teks isian bebas menjadi bilah pilihan otomatis (<i>drop-down list</i>) untuk entitas kota asal dan metode pembayaran. Hal ini akan memangkas beban pembersihan data (*cleansing*) di masa mendatang.</li>
             
-            <li style="margin-top:10px;"><b>Reposisi Program Studi Sistem Informasi dan Manajemen Informatika</b><br>
-            Menjalankan riset pasar untuk memetakan <i>Unique Selling Point</i> (USP) prodi. Fokuskan pemasaran pada jalur luaran karir yang spesifik, contohnya mengampanyekan Sistem Informasi sebagai pencetak <i>Data Analyst</i>.</li>
+            <li style="margin-top:10px;"><b>Validasi Redundansi Atribut Keuangan</b><br>
+            Lakukan audit terhadap arsitektur tabel pendaftaran. Pastikan bahwa kesamaan nilai absolut antara kolom <code>biaya_daftar</code> dan <code>jumlah_pembayaran</code> tidak berasal dari kesalahan replikasi penyimpanan oleh sistem aplikasi situs web.</li>
             
-            <li style="margin-top:10px;"><b>Terapkan Strategi Harga Dinamis (<i>Dynamic Pricing</i>)</b><br>
-            Menurunkan biaya daftar Teknik Komputer menjadi Rp 250.000 guna meningkatkan daya saingnya di pasar. Pertahankan biaya murah Rp 200.000 pada Manajemen Informatika sebagai strategi menangkap volume.</li>
-            
-            <li style="margin-top:10px;"><b>Kaji Ulang Standar Penerimaan untuk Sistem Informasi</b><br>
-            Menganalisis penyebab utama gugurnya masal pendaftar Sistem Informasi. Jika kegagalan disebabkan oleh soal ujian yang terlalu rumit bagi standar lulusan SMA, sesuaikan batas nilai kelulusan atau sediakan program pembekalan.</li>
+            <li style="margin-top:10px;"><b>Analisis Korelasi Lanjutan (<i>Advanced Analytics</i>)</b><br>
+            Setelah mesin penanggalan diperbaiki ke format YYYY-MM-DD, lakukan analisis regresi lanjutan untuk mengidentifikasi pada jam atau hari spesifik kapan lonjakan (*peak traffic*) tertinggi calon pendaftar terjadi, guna menentukan waktu terbaik melakukan penyebaran iklan digital.</li>
         </ol>
-        
-        <div class="page-number-bottom">7</div>
-    </div>
-
-    <div class="page">
-        <h1>DAFTAR PUSTAKA</h1>
-        
-        <ul class="bibliography">
-            <li>[1] M. S. Rarda, K. Wibisono, and Z. Arifin, "Arsitektur dan Implementasi Business Intelligence Dashboard dalam Mendukung Strategic Decision Making," <i>Jurnal Ilmiah Sistem Informasi Bisnis (JISIB)</i>, vol. 12, no. 2, pp. 112–120, 2022.</li>
-            
-            <li>[2] R. A. Pratama and L. E. Nugroho, "Model Business Intelligence untuk Analisis Pemetaan dan Retensi Mahasiswa Baru di Perguruan Tinggi Swasta," <i>Jurnal Eksplorasi Sistem Informasi dan Bisnis Digital</i>, vol. 4, no. 1, pp. 45–54, 2023.</li>
-            
-            <li>[3] N. Hasanah and A. Setiawan, "Penerapan Teknik Data Cleaning pada Rekam Jejak Transaksi Pengguna Layanan Digital," <i>Jurnal Teknologi Informasi dan Ilmu Komputer (JTIIK)</i>, vol. 8, no. 4, pp. 789–796, 2021.</li>
-            
-            <li>[4] T. Wibowo and M. N. Hidayat, "Analisis Visual dan Transformasi Data Atribut Geografis menggunakan Pendekatan ETL (Extract, Transform, Load)," <i>Jurnal Algoritma, Logika dan Komputasi</i>, vol. 9, no. 1, pp. 14–22, 2024.</li>
-            
-            <li>[5] D. P. Sari and K. Wijaya, "Efektivitas Visualisasi Data Berbasis Web Hub Analytics terhadap Kecepatan Audit Laporan Kinerja Organisasi," <i>Jurnal Bisnis dan Manajemen Digital</i>, vol. 3, no. 2, pp. 88–97, 2025.</li>
-        </ul>
         
         <div class="page-number-bottom">8</div>
     </div>
 
+    <!-- DAFTAR PUSTAKA (Halaman 9) -->
+    <div class="page">
+        <h1>DAFTAR PUSTAKA</h1>
+        
+        <div class="bib-item">
+            [1] M. S. Rarda, K. Wibisono, and Z. Arifin, "Arsitektur dan Implementasi Business Intelligence Dashboard dalam Mendukung Strategic Decision Making," <i>Jurnal Ilmiah Sistem Informasi Bisnis (JISIB)</i>, vol. 12, no. 2, pp. 112–120, 2022.
+        </div>
+        
+        <div class="bib-item">
+            [2] R. A. Pratama and L. E. Nugroho, "Model Business Intelligence untuk Analisis Pemetaan dan Retensi Mahasiswa Baru di Perguruan Tinggi Swasta," <i>Jurnal Eksplorasi Sistem Informasi dan Bisnis Digital</i>, vol. 4, no. 1, pp. 45–54, 2023.
+        </div>
+        
+        <div class="bib-item">
+            [3] N. Hasanah and A. Setiawan, "Penerapan Teknik Data Cleaning pada Rekam Jejak Transaksi Pengguna Layanan Digital," <i>Jurnal Teknologi Informasi dan Ilmu Komputer (JTIIK)</i>, vol. 8, no. 4, pp. 789–796, 2021.
+        </div>
+        
+        <div class="bib-item">
+            [4] T. Wibowo and M. N. Hidayat, "Analisis Visual dan Transformasi Data Atribut Geografis menggunakan Pendekatan ETL (Extract, Transform, Load)," <i>Jurnal Algoritma, Logika dan Komputasi</i>, vol. 9, no. 1, pp. 14–22, 2024.
+        </div>
+        
+        <div class="bib-item">
+            [5] D. P. Sari and K. Wijaya, "Efektivitas Visualisasi Data Berbasis Web Hub Analytics terhadap Kecepatan Audit Laporan Kinerja Organisasi," <i>Jurnal Bisnis dan Manajemen Digital</i>, vol. 3, no. 2, pp. 88–97, 2025.
+        </div>
+        
+        <div class="page-number-bottom">9</div>
+    </div>
+
+    <!-- DAFTAR RIWAYAT HIDUP (Halaman 10) -->
     <div class="page">
         <h1>DAFTAR RIWAYAT HIDUP ANGGOTA</h1>
         
@@ -625,13 +644,13 @@
                         <li><b>NIM:</b> 33333333</li>
                         <li><b>Program Studi:</b> Bisnis Digital (Semester 6)</li>
                         <li><b>Fakultas:</b> Fakultas Ekonomi dan Bisnis (FEB), Universitas Nusa Mandiri</li>
-                        <li><b>Peran dalam Analisis:</b> Bertanggung jawab membedah anomali data atribut wilayah, menyusun matriks permasalahan bisnis, merumuskan rekomendasi <i>Dynamic Pricing</i> dan <i>Data Governance</i> pada Bab IV Kesimpulan dan Saran.</li>
+                        <li><b>Peran dalam Analisis:</b> Bertanggung jawab membedah anomali data atribut wilayah, menyusun matriks permasalahan bisnis, serta merumuskan rekomendasi strategi bisnis pada Bab IV Kesimpulan dan Saran.</li>
                     </ol>
                 </div>
             </div>
         </div>
         
-        <div class="page-number-bottom">9</div>
+        <div class="page-number-bottom">10</div>
     </div>
 
 </body>
