@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <title>Presentasi BI PMB Nusa Mandiri</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/league.min.css">
+    <style>
+        .reveal { font-family: 'Segoe UI', sans-serif; }
+        h1, h2 { color: #f1c40f !important; }
+        .slide-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+        .chart-img { max-height: 400px; width: 100%; object-fit: contain; }
+        .caption { font-size: 0.6em; color: #aaa; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Slide 1: Judul -->
+            <section>
+                <h1>Analisis Business Intelligence</h1>
+                <p>Proses Penerimaan Mahasiswa Baru (PMB) Universitas Nusa Mandiri</p>
+                <div class="slide-box">
+                    <p>Oleh: Kelompok 1</p>
+                    <small>Analisis berbasis data untuk optimalisasi PMB</small>
+                </div>
+            </section>
+
+            <!-- Slide 2: Profil Dataset -->
+            <section>
+                <h2>1. Profil Dataset</h2>
+                <div class="slide-box">
+                    <p style="text-align: left;">Dataset PMB Nusa Mandiri mencakup informasi lengkap pendaftaran mahasiswa baru:</p>
+                    <ul style="text-align: left;">
+                        <li><strong>Nama Dataset:</strong> PMB Mahasiswa Nusa Mandiri</li>
+                        <li><strong>Volume:</strong> 40 Baris data</li>
+                        <li><strong>Dimensi:</strong> 13 Kolom (Demografi, Keuangan, Seleksi)</li>
+                        <li><strong>Kualitas:</strong> 0% Null values (Data terisi penuh)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Slide 3: Tahapan Preprocessing -->
+            <section>
+                <h2>2. Tahapan Preprocessing</h2>
+                <div class="slide-box">
+                    <ol style="text-align: left;">
+                        <li><strong>Standardisasi Lokasi:</strong> Menyamakan format "Jakarta", " JKT ", dan "jakarta".</li>
+                        <li><strong>Normalisasi Tanggal:</strong> Mengubah berbagai format (Excel serial, DD/MM/YY) ke ISO.</li>
+                        <li><strong>Audit Keuangan:</strong> Validasi kolom Biaya Daftar vs Jumlah Pembayaran.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Slide 4: Temuan Analisis (Prodi) -->
+            <section>
+                <h2>3. Temuan: Distribusi Pendaftar</h2>
+                <div class="grid-2">
+                    <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Jumlah%20Pendaftar%20per%20Program%20Studi.png" class="chart-img" alt="">
+                    <div style="text-align: left;">
+                        <p><strong>Teknik Informatika</strong> dan <strong>Sistem Informasi</strong> menjadi program studi yang paling diminati oleh calon mahasiswa.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: Analisis Status Penerimaan -->
+            <section>
+                <h2>4. Analisis Status Penerimaan</h2>
+                <div class="grid-2">
+                    <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Distribusi%20Status%20Penerimaan.png" class="chart-img" alt="">
+                    <ul style="text-align: left; font-size: 0.8em;">
+                        <li>Tingkat penerimaan tinggi (77,5%).</li>
+                        <li>Kegagalan pendaftaran berkorelasi dengan kepuasan rendah dan nilai ujian < 75.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Slide 6: Analisis Keuangan -->
+            <section>
+                <h2>5. Analisis Biaya Daftar</h2>
+                <div class="grid-2">
+                    <img src="https://faruq1997.github.io/Bisnis_Intelligence/sampel_laporan/Rata-rata%20Biaya%20Daftar%20per%20Program%20Studi.png" class="chart-img" alt="">
+                    <ul style="text-align: left; font-size: 0.8em;">
+                        <li>Teknik Komputer tercatat memiliki biaya daftar tertinggi.</li>
+                        <li>Perlu evaluasi apakah biaya berpengaruh pada volume pendaftar.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Slide 7: Rekomendasi Strategis -->
+            <section>
+                <h2>6. Rekomendasi Strategis</h2>
+                <ul style="text-align: left; font-size: 0.85em;">
+                    <li><strong>Reposisi Marketing:</strong> Menonjolkan jalur karir spesifik untuk tiap Prodi.</li>
+                    <li><strong>Strategi Harga:</strong> Penyesuaian biaya untuk Prodi dengan daya saing rendah.</li>
+                    <li><strong>Evaluasi Seleksi:</strong> Kaji ulang standar ujian untuk menjaga kualitas pendaftar.</li>
+                </ul>
+            </section>
+
+            <!-- Slide 8: Penutup -->
+            <section>
+                <h1>TERIMA KASIH</h1>
+                <p>Ada Pertanyaan?</p>
+            </section>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({ hash: false, slideNumber: 'c/t' });
+    </script>
+</body>
+</html>
